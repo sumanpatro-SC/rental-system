@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Details</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div class="container">
+        <h2>Customer Registration</h2>
+        <form id="custForm" class="form-group">
+            <input type="text" id="cname" placeholder="Customer Name" required>
+            <input type="text" id="cphone" placeholder="Contact Number" required>
+            
+            <label>Select Available Property:</label>
+            <select id="propSelect" required>
+                <option value="">-- Choose a Property --</option>
+            </select>
+            
+            <input type="date" id="bdate" required>
+            <button type="submit" class="btn-save">Add Customer</button>
+        </form>
+        
+        <hr>
+        <h3>Registered Customers</h3>
+        <table id="custTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Property</th>
+                    <th>Billing Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="footer-placeholder"></div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Property</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div class="container">
+        <h2>Add New Property</h2>
+        <form id="propForm">
+            <label>Property Title</label>
+            <input type="text" id="title" required>
+            
+            <label>Description</label>
+            <textarea id="desc"></textarea>
+            
+            <label>Rent Price (Rupees)</label>
+            <input type="number" id="price" required>
+            
+            <div style="margin-top:20px;">
+                <button type="submit" style="background:green; color:white; padding:10px;">Save Property</button>
+                <button type="button" onclick="window.location='/'" style="background:red; color:white; padding:10px;">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <div id="header-placeholder"></div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
