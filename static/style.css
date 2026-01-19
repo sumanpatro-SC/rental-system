@@ -369,3 +369,267 @@ footer { background: #2d2d2d; color: white; text-align: center; padding: 20px; p
     .navbar, .toolbar, .btn-group, button, footer, form, hr { display: none !important; }
     .container { box-shadow: none; margin: 0; width: 100%; }
 }
+
+
+
+/* --- MODERN COLOR PALETTE --- */
+:root {
+    --primary: #2d3436;
+    --accent: #00b894;
+    --danger: #d63031;
+    --warning: #feca57;
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --text: #2d3436;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding-bottom: 80px;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    background: var(--primary);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar strong {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.nav-links a {
+    color: #dfe6e9;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--accent);
+}
+
+/* --- CONTAINER & CARDS --- */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px;
+    background: var(--card);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+h2 {
+    border-left: 5px solid var(--accent);
+    padding-left: 15px;
+    margin-bottom: 30px;
+}
+
+/* --- BUTTONS --- */
+button {
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.btn-save { background: var(--accent); color: white; }
+.btn-del { background: var(--danger); color: white; }
+.btn-edit { background: var(--warning); color: #2d3436; }
+.btn-info { background: #0984e3; color: white; }
+
+/* --- TABLES --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #636e72;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #eee;
+}
+
+td {
+    padding: 18px 15px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* --- STATUS BADGES --- */
+.status-available {
+    background: #e1f5fe;
+    color: #01579b;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-rented {
+    background: #ffebee;
+    color: var(--danger);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* --- MODAL --- */
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+/* --- SEARCH BAR --- */
+.toolbar input {
+    border: 2px solid #eee;
+    padding: 12px 20px;
+    border-radius: 10px;
+    width: 300px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.toolbar input:focus {
+    border-color: var(--accent);
+}
+
+
+
+
+
+/* --- UPDATED LIGHT PASTEL COLOR PALETTE --- */
+:root {
+    --primary: #57606f;       /* Soft Gray-Blue */
+    --accent: #7bed9f;        /* Pastel Green */
+    --danger: #ff7675;        /* Pastel Red */
+    --warning: #f1c40f;       /* Soft Yellow */
+    --bg-overlay: rgba(245, 246, 250, 0.9); /* Semi-transparent Pastel White */
+    --card: #ffffff;
+    --text: #2f3542;
+    --pastel-blue: #70a1ff;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    margin: 0;
+    padding-bottom: 100px;
+    
+    /* --- BACKGROUND IMAGE CONFIGURATION --- */
+    background-image: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
+                      url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    background: var(--primary);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar strong {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+/* --- CONTAINER (Updated for Pastel Look) --- */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95); /* Slight transparency for background blend */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+h2 {
+    border-left: 5px solid var(--pastel-blue);
+    padding-left: 15px;
+    color: var(--primary);
+}
+
+/* --- BUTTONS (Pastel Styling) --- */
+button {
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-save { background: var(--accent); color: var(--text); }
+.btn-del { background: var(--danger); color: white; }
+.btn-info { background: var(--pastel-blue); color: white; }
+
+/* --- TABLES --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+th {
+    background-color: rgba(112, 161, 255, 0.1); /* Very light pastel blue header */
+    color: var(--primary);
+    padding: 15px;
+    border-bottom: 2px solid #ddd;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- FOOTER --- */
+.main-footer {
+    background: var(--primary);
+    color: #dfe6e9;
+    padding: 20px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.footer-info {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 5px;
+}
