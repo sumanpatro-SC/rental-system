@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Load Header & Footer
     fetch('/templates/header.html').then(r => r.text()).then(html => {
         if (document.getElementById('header-placeholder')) document.getElementById('header-placeholder').innerHTML = html;
     });
@@ -7,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById('footer-placeholder')) document.getElementById('footer-placeholder').innerHTML = html;
     });
 
-    // 2. Route Handling based on URL
     const path = window.location.pathname;
     if (path === "/" || path.endsWith("index.html")) loadDashboard();
     if (path === "/add-property") setupAddProperty();
@@ -16,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path === "/billing") loadBillingList();
 });
 
-// --- DASHBOARD ---
+// --- API DATA ---
 async function loadDashboard() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -25,7 +23,6 @@ async function loadDashboard() {
     if (countEl) countEl.innerText = count;
 }
 
-// --- ADD PROPERTY ---
 function setupAddProperty() {
     const form = document.getElementById('propForm');
     if (!form) return;
@@ -45,7 +42,6 @@ function setupAddProperty() {
     };
 }
 
-// --- PROPERTY LIST ---
 async function loadPropertyList() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -65,7 +61,6 @@ async function loadPropertyList() {
     }
 }
 
-// --- CUSTOMER PAGE ---
 async function loadCustomerPage() {
     const resP = await fetch('/api/properties');
     const props = await resP.json();
@@ -93,14 +88,12 @@ async function loadCustomerPage() {
                 <td>${c.p_name}</td>
                 <td>${c.date}</td>
                 <td style="text-align:right;">
-                    <button class="btn-edit" onclick='editCustomer(${JSON.stringify(c)})'>Edit</button>
                     <button class="btn-del" onclick="deleteItem('billing', ${c.id})">Delete</button>
                 </td>
             </tr>`).join('');
     }
 }
 
-// --- BILLING LIST ---
 async function loadBillingList() {
     const res = await fetch('/api/billing-data');
     const data = await res.json();
@@ -121,9 +114,15 @@ async function loadBillingList() {
     }
 }
 
-// --- PDF DOWNLOAD (Using jsPDF) ---
+// --- PDF DOWNLOAD ---
 function downloadPDF(tableId, reportName) {
-    const { jsPDF } = window.jspdf;
+    // Check if library is available
+    if (!window.jspdf) {
+        alert("Framework is still loading. Please try again in 1 second.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf; // Get the framework class
     const doc = new jsPDF();
 
     doc.text(reportName, 14, 22);
@@ -134,43 +133,34 @@ function downloadPDF(tableId, reportName) {
         theme: 'grid',
         headStyles: { fillColor: [40, 167, 69] },
         didParseCell: function(data) {
-            // Hide the last column (Action buttons) in the PDF
+            // Hide Action column
             if (data.column.index === (data.table.columns.length - 1)) {
                 data.cell.text = '';
             }
         }
     });
 
-    doc.save(`${reportName}.pdf`);
+    doc.save(`${reportName}.pdf`); // Trigger download
 }
 
-// --- QR CODE GENERATION ---
+// --- QR CODE ---
 function viewRowInfo(btn) {
     const row = btn.closest("tr");
     const table = row.closest("table");
     const cells = Array.from(row.cells).slice(0, -1);
     const modal = document.getElementById("qrModal");
     const container = document.getElementById("qrcode");
-
     modal.style.display = "block";
     container.innerHTML = ""; 
-
     let qrText = "";
     cells.forEach((cell, index) => {
         const header = table.tHead.rows[0].cells[index].innerText.replace(" ↕", "");
         qrText += `${header}: ${cell.innerText}\n`;
     });
-
-    new QRCode(container, {
-        text: qrText,
-        width: 150,
-        height: 150
-    });
+    new QRCode(container, { text: qrText, width: 150, height: 150 });
 }
 
-function closeQR() { 
-    document.getElementById("qrModal").style.display = "none"; 
-}
+function closeQR() { document.getElementById("qrModal").style.display = "none"; }
 
 // --- UTILITIES ---
 function downloadCSV(tableId, filename) {
@@ -212,21 +202,4 @@ async function deleteItem(type, id) {
         await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
         location.reload();
     }
-}
-
-function editCustomer(cust) {
-    document.getElementById('form-title').innerText = "Edit Customer Details";
-    document.getElementById('custId').value = cust.id;
-    document.getElementById('cname').value = cust.c_name;
-    document.getElementById('cphone').value = cust.contact;
-    document.getElementById('bdate').value = cust.date;
-    document.getElementById('saveBtn').innerText = "Update Details";
-    
-    const select = document.getElementById('propSelect');
-    const opt = document.createElement('option');
-    opt.value = cust.p_id; 
-    opt.innerHTML = cust.p_name; 
-    opt.selected = true;
-    select.appendChild(opt);
-    window.scrollTo(0, 0);
 }
