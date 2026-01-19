@@ -20,25 +20,30 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             with open(file_path, 'rb') as f:
                 self.send_response(200)
-                self.send_header('Content-type', content_type)
+                # UTF-8 charset is critical to stop symbols like â€¢ appearing
+                self.send_header('Content-type', f"{content_type}; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(f.read())
-        except:
-            self.send_error(404)
+        except Exception:
+            self.send_error(404, "File Not Found")
 
     def do_GET(self):
-        # Routing Logic
-        if self.path == '/': self.serve_file('templates/index.html', 'text/html')
-        elif self.path == '/add-property': self.serve_file('templates/add_property.html', 'text/html')
-        elif self.path == '/property-list': self.serve_file('templates/property_list.html', 'text/html')
-        elif self.path == '/customer-details': self.serve_file('templates/customer_details.html', 'text/html')
-        elif self.path == '/billing': self.serve_file('templates/billing.html', 'text/html')
-        elif self.path == '/static/style.css': self.serve_file('static/style.css', 'text/css')
-        elif self.path == '/static/script.js': self.serve_file('static/script.js', 'application/javascript')
-        elif self.path == '/templates/header.html': self.serve_file('templates/header.html', 'text/html')
-        elif self.path == '/templates/footer.html': self.serve_file('templates/footer.html', 'text/html')
+        routes = {
+            '/': ('templates/index.html', 'text/html'),
+            '/add-property': ('templates/add_property.html', 'text/html'),
+            '/property-list': ('templates/property_list.html', 'text/html'),
+            '/customer-details': ('templates/customer_details.html', 'text/html'),
+            '/billing': ('templates/billing.html', 'text/html'),
+            '/static/style.css': ('static/style.css', 'text/css'),
+            '/static/script.js': ('static/script.js', 'application/javascript'),
+            '/templates/header.html': ('templates/header.html', 'text/html'),
+            '/templates/footer.html': ('templates/footer.html', 'text/html'),
+        }
+
+        if self.path in routes:
+            path, ctype = routes[self.path]
+            self.serve_file(path, ctype)
         
-        # API: Read All Properties
         elif self.path == '/api/properties':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -47,42 +52,43 @@ class RequestHandler(BaseHTTPRequestHandler):
             conn.close()
             self.send_json(data)
         
-        # API: Read Billing/Customer Data
         elif self.path == '/api/billing-data':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
-            cursor.execute('''SELECT c.id, p.title, c.name, p.price, c.contact, c.billing_date 
+            cursor.execute('''SELECT c.id, p.title, c.name, p.price, c.contact, c.billing_date, p.id 
                               FROM customers c JOIN properties p ON c.property_id = p.id''')
-            data = [dict(zip(['id', 'p_name', 'c_name', 'price', 'contact', 'date'], row)) for row in cursor.fetchall()]
+            data = [dict(zip(['id', 'p_name', 'c_name', 'price', 'contact', 'date', 'p_id'], row)) for row in cursor.fetchall()]
             conn.close()
             self.send_json(data)
 
     def do_POST(self):
         try:
             content_length = int(self.headers['Content-Length'])
-            post_data = json.loads(self.rfile.read(content_length))
+            # CRITICAL FIX: decode('utf-8') prevents 502 errors
+            post_data = json.loads(self.rfile.read(content_length).decode('utf-8'))
+            
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
 
             if self.path == '/api/add-property':
                 cursor.execute("INSERT INTO properties (title, description, price) VALUES (?, ?, ?)", 
-                               (post_data['title'], post_data['description'], post_data['price']))
+                               (post_data.get('title'), post_data.get('description'), post_data.get('price')))
             
             elif self.path == '/api/add-customer':
                 cursor.execute("INSERT INTO customers (name, contact, property_id, billing_date) VALUES (?, ?, ?, ?)",
-                               (post_data['name'], post_data['contact'], post_data['property_id'], post_data['date']))
-                cursor.execute("UPDATE properties SET status = 'rented' WHERE id = ?", (post_data['property_id'],))
+                               (post_data.get('name'), post_data.get('contact'), post_data.get('property_id'), post_data.get('date')))
+                cursor.execute("UPDATE properties SET status = 'rented' WHERE id = ?", (post_data.get('property_id'),))
 
             conn.commit()
             conn.close()
             self.send_json({"status": "success"})
         except Exception as e:
+            print(f"POST Error: {e}")
             self.send_error(500, str(e))
 
     def do_DELETE(self):
         try:
-            path_parts = self.path.split('/')
-            item_id = path_parts[-1]
+            item_id = self.path.split('/')[-1]
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
             
@@ -103,9 +109,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def send_json(self, data):
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-type', 'application/json; charset=utf-8')
         self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
+        self.wfile.write(json.dumps(data).encode('utf-8'))
 
 if __name__ == '__main__':
     init_db()

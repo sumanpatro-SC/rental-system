@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Add Property</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -12,17 +13,14 @@
             <div class="form-group">
                 <label>Property Title</label>
                 <input type="text" id="title" placeholder="e.g. 3BHK Apartment" required>
-                
                 <label>Description</label>
                 <textarea id="desc" rows="4" placeholder="Enter details..."></textarea>
-                
                 <label>Rent Price (Rupees)</label>
                 <input type="number" id="price" placeholder="5000" required>
             </div>
-            
             <div class="btn-group">
                 <button type="submit" class="btn-save">Save Property</button>
-                <button type="button" class="btn-cancel" onclick="window.location='/'">Cancel</button>
+                <button type="button" class="btn-del" onclick="window.location='/'">Cancel</button>
             </div>
         </form>
     </div>

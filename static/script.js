@@ -1,24 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Load Header & Footer
     fetch('/templates/header.html').then(r => r.text()).then(html => {
-        const header = document.getElementById('header-placeholder');
-        if (header) header.innerHTML = html;
+        if (document.getElementById('header-placeholder')) document.getElementById('header-placeholder').innerHTML = html;
     });
     fetch('/templates/footer.html').then(r => r.text()).then(html => {
-        const footer = document.getElementById('footer-placeholder');
-        if (footer) footer.innerHTML = html;
+        if (document.getElementById('footer-placeholder')) document.getElementById('footer-placeholder').innerHTML = html;
     });
 
-    // 2. Route Handling
     const path = window.location.pathname;
     if (path === "/" || path.endsWith("index.html")) loadDashboard();
+    if (path === "/add-property") setupAddProperty();
     if (path === "/property-list") loadPropertyList();
     if (path === "/customer-details") loadCustomerPage();
     if (path === "/billing") loadBillingList();
 });
 
-// --- DATA LOADING LOGIC ---
-
+// --- DASHBOARD ---
 async function loadDashboard() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -27,6 +24,27 @@ async function loadDashboard() {
     if (countEl) countEl.innerText = count;
 }
 
+// --- ADD PROPERTY ---
+function setupAddProperty() {
+    const form = document.getElementById('propForm');
+    if (!form) return;
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const data = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('desc').value,
+            price: document.getElementById('price').value
+        };
+        const res = await fetch('/api/add-property', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (res.ok) { window.location.href = '/property-list'; }
+    };
+}
+
+// --- PROPERTY LIST ---
 async function loadPropertyList() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -37,26 +55,29 @@ async function loadPropertyList() {
                 <td>${i + 1}</td>
                 <td>${p.title}</td>
                 <td>₹${p.price}</td>
-                <td>${p.status}</td>
-                <td>
-                    <button class="btn-edit" onclick="viewQR('Prop: ${p.title} | Rent: ${p.price}')">View Info</button>
+                <td><span class="status-${p.status}">${p.status}</span></td>
+                <td style="text-align:right;">
+                    <button class="btn-info" onclick="viewQR('Property: ${p.title} | Rent: ₹${p.price}')">View Info</button>
                     <button class="btn-del" onclick="deleteItem('properties', ${p.id})">Delete</button>
                 </td>
             </tr>`).join('');
     }
 }
 
+// --- CUSTOMER PAGE ---
 async function loadCustomerPage() {
     const resP = await fetch('/api/properties');
     const props = await resP.json();
     const select = document.getElementById('propSelect');
     if (select) {
         select.innerHTML = '<option value="">-- Choose a Property --</option>';
-        props.filter(p => p.status === 'available').forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.innerHTML = `${p.title} (₹${p.price})`;
-            select.appendChild(opt);
+        props.forEach(p => {
+            if (p.status === 'available') {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.innerHTML = `${p.title} (₹${p.price})`;
+                select.appendChild(opt);
+            }
         });
     }
 
@@ -76,7 +97,7 @@ async function loadCustomerPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            if (custId) await fetch(`/api/billing/${custId}`, { method: 'DELETE' });
+            if (custId) { await fetch(`/api/billing/${custId}`, { method: 'DELETE' }); }
             location.reload();
         };
     }
@@ -91,7 +112,7 @@ async function loadCustomerPage() {
                 <td>${c.contact}</td>
                 <td>${c.p_name}</td>
                 <td>${c.date}</td>
-                <td>
+                <td style="text-align:right;">
                     <button class="btn-edit" onclick='editCustomer(${JSON.stringify(c)})'>Edit</button>
                     <button class="btn-del" onclick="deleteItem('billing', ${c.id})">Delete</button>
                 </td>
@@ -99,6 +120,7 @@ async function loadCustomerPage() {
     }
 }
 
+// --- BILLING LIST ---
 async function loadBillingList() {
     const res = await fetch('/api/billing-data');
     const data = await res.json();
@@ -111,54 +133,27 @@ async function loadBillingList() {
                 <td>₹${b.price}</td>
                 <td>${b.contact}</td>
                 <td>${b.date}</td>
-                <td><button class="btn-del" onclick="deleteItem('billing', ${b.id})">Delete</button></td>
+                <td style="text-align:right;"><button class="btn-del" onclick="deleteItem('billing', ${b.id})">Delete</button></td>
             </tr>`).join('');
     }
 }
 
-// --- UNIVERSAL UTILITIES (NO LIBRARIES) ---
-
-/**
- * Native CSV Download
- * Loops through table rows and creates a downloadable Blob
- */
+// --- UTILITIES ---
 function downloadCSV(tableId, filename) {
     const table = document.getElementById(tableId);
-    let csvContent = "";
-    
+    let csv = "\uFEFF"; 
     for (let row of table.rows) {
-        let rowData = [];
-        // Loop through cells, excluding the last "Action" column
-        for (let i = 0; i < row.cells.length - 1; i++) {
-            let text = row.cells[i].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/,/g, ";");
-            rowData.push('"' + text + '"');
-        }
-        csvContent += rowData.join(",") + "\r\n";
+        let cols = Array.from(row.cells).slice(0, -1);
+        csv += cols.map(c => `"${c.innerText}"`).join(",") + "\r\n";
     }
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename + ".csv");
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    link.download = filename + ".csv";
     link.click();
-    document.body.removeChild(link);
 }
 
-/**
- * Native PDF Report
- * Uses the browser's high-quality print engine.
- * To save as PDF, the user selects "Save as PDF" in the print dialog.
- */
-function downloadPDF() {
-    window.print();
-}
+function downloadPDF() { window.print(); }
 
-/**
- * Universal Search/Filter
- */
 function filterTable(tableId, inputId) {
     const input = document.getElementById(inputId).value.toUpperCase();
     const rows = document.querySelector(`#${tableId} tbody`).rows;
@@ -167,46 +162,29 @@ function filterTable(tableId, inputId) {
     }
 }
 
-/**
- * Universal Table Sort
- */
 function sortTable(tableId, n) {
     const table = document.getElementById(tableId);
     const rows = Array.from(table.rows).slice(1);
     const dir = table.getAttribute("data-dir") === "asc" ? "desc" : "asc";
-
     rows.sort((a, b) => {
-        const x = a.cells[n].innerText.toLowerCase();
-        const y = b.cells[n].innerText.toLowerCase();
-        return dir === "asc" ? x.localeCompare(y, undefined, { numeric: true }) : y.localeCompare(x, undefined, { numeric: true });
+        let x = a.cells[n].innerText.toLowerCase();
+        let y = b.cells[n].innerText.toLowerCase();
+        return dir === "asc" ? x.localeCompare(y, undefined, {numeric: true}) : y.localeCompare(x, undefined, {numeric: true});
     });
-
     rows.forEach(row => table.tBodies[0].appendChild(row));
     table.setAttribute("data-dir", dir);
 }
 
-/**
- * Native Info Viewer (QR Alternative)
- */
 function viewQR(dataString) {
     const modal = document.getElementById("qrModal");
     const container = document.getElementById("qrcode");
     if (modal && container) {
         modal.style.display = "block";
-        container.innerHTML = `
-            <div style="border: 2px solid #333; padding: 10px; background: #fff;">
-                <p><strong>Property Info Card</strong></p>
-                <hr>
-                <p style="font-size: 14px; word-break: break-all;">${dataString}</p>
-                <p style="font-size: 10px; color: #666;">(Use mobile camera to scan text)</p>
-            </div>
-        `;
+        container.innerHTML = `<div style="padding:10px; border:1px solid #ddd;">${dataString}</div>`;
     }
 }
 
-function closeQR() {
-    document.getElementById("qrModal").style.display = "none";
-}
+function closeQR() { document.getElementById("qrModal").style.display = "none"; }
 
 async function deleteItem(type, id) {
     if (confirm("Confirm deletion?")) {
@@ -222,5 +200,9 @@ function editCustomer(cust) {
     document.getElementById('cphone').value = cust.contact;
     document.getElementById('bdate').value = cust.date;
     document.getElementById('saveBtn').innerText = "Update Details";
+    const select = document.getElementById('propSelect');
+    const opt = document.createElement('option');
+    opt.value = cust.p_id; opt.innerHTML = cust.p_name; opt.selected = true;
+    select.appendChild(opt);
     window.scrollTo(0, 0);
 }
