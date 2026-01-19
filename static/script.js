@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Load Header & Footer
     fetch('/templates/header.html').then(r => r.text()).then(html => {
         if (document.getElementById('header-placeholder')) document.getElementById('header-placeholder').innerHTML = html;
     });
@@ -57,7 +56,7 @@ async function loadPropertyList() {
                 <td>₹${p.price}</td>
                 <td><span class="status-${p.status}">${p.status}</span></td>
                 <td style="text-align:right;">
-                    <button class="btn-info" onclick="viewQR('Property: ${p.title} | Rent: ₹${p.price}')">View Info</button>
+                    <button class="btn-info" onclick="viewRowInfo(this)">QR Info</button>
                     <button class="btn-del" onclick="deleteItem('properties', ${p.id})">Delete</button>
                 </td>
             </tr>`).join('');
@@ -133,10 +132,60 @@ async function loadBillingList() {
                 <td>₹${b.price}</td>
                 <td>${b.contact}</td>
                 <td>${b.date}</td>
-                <td style="text-align:right;"><button class="btn-del" onclick="deleteItem('billing', ${b.id})">Delete</button></td>
+                <td style="text-align:right;">
+                    <button class="btn-info" onclick="viewRowInfo(this)">QR Info</button>
+                    <button class="btn-del" onclick="deleteItem('billing', ${b.id})">Delete</button>
+                </td>
             </tr>`).join('');
     }
 }
+
+// --- QR INFO GENERATION (Using Library) ---
+function viewRowInfo(btn) {
+    const row = btn.closest("tr");
+    const table = row.closest("table");
+    const cells = Array.from(row.cells).slice(0, -1);
+    const modal = document.getElementById("qrModal");
+    const container = document.getElementById("qrcode");
+
+    modal.style.display = "block";
+    container.innerHTML = ""; // Clear old QR
+
+    let qrText = "";
+    cells.forEach((cell, index) => {
+        const header = table.tHead.rows[0].cells[index].innerText.replace(" ↕", "");
+        qrText += `${header}: ${cell.innerText}\n`;
+    });
+
+    // Generate real QR Code
+    new QRCode(container, {
+        text: qrText,
+        width: 150,
+        height: 150
+    });
+}
+
+function viewTableInfo(tableId) {
+    const table = document.getElementById(tableId);
+    const rows = Array.from(table.querySelector("tbody").rows);
+    const modal = document.getElementById("qrModal");
+    const container = document.getElementById("qrcode");
+
+    modal.style.display = "block";
+    container.innerHTML = "<h3>Table Summary</h3>";
+
+    rows.forEach((row) => {
+        if (row.style.display !== "none") {
+            const div = document.createElement("div");
+            div.style.borderBottom = "1px solid #eee";
+            div.style.padding = "5px";
+            div.innerText = row.innerText.replace(/\t/g, " | ");
+            container.appendChild(div);
+        }
+    });
+}
+
+function closeQR() { document.getElementById("qrModal").style.display = "none"; }
 
 // --- UTILITIES ---
 function downloadCSV(tableId, filename) {
@@ -174,17 +223,6 @@ function sortTable(tableId, n) {
     rows.forEach(row => table.tBodies[0].appendChild(row));
     table.setAttribute("data-dir", dir);
 }
-
-function viewQR(dataString) {
-    const modal = document.getElementById("qrModal");
-    const container = document.getElementById("qrcode");
-    if (modal && container) {
-        modal.style.display = "block";
-        container.innerHTML = `<div style="padding:10px; border:1px solid #ddd;">${dataString}</div>`;
-    }
-}
-
-function closeQR() { document.getElementById("qrModal").style.display = "none"; }
 
 async function deleteItem(type, id) {
     if (confirm("Confirm deletion?")) {

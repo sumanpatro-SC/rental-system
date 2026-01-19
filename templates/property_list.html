@@ -9,13 +9,16 @@
     <div id="header-placeholder"></div>
     <div class="container">
         <h2>Property List</h2>
+        
         <div class="toolbar">
             <input type="text" id="propSearchInput" placeholder="Search Property..." onkeyup="filterTable('propTable', 'propSearchInput')">
             <div class="export-btns">
+                <button onclick="viewTableInfo('propTable')" class="btn-info">View Info</button>
                 <button onclick="downloadCSV('propTable', 'Property_List')" class="btn-edit">Export Excel</button>
                 <button onclick="downloadPDF()" class="btn-save">Export PDF</button>
             </div>
         </div>
+
         <table id="propTable">
             <thead>
                 <tr>
@@ -29,9 +32,14 @@
             <tbody></tbody>
         </table>
     </div>
+
     <div id="qrModal" class="modal">
-        <div class="modal-content"><span class="close" onclick="closeQR()">&times;</span><h3>Info</h3><div id="qrcode"></div></div>
+        <div class="modal-content">
+            <span class="close" onclick="closeQR()">&times;</span>
+            <div id="qrcode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;"></div>
+        </div>
     </div>
+
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>

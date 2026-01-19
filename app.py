@@ -20,7 +20,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             with open(file_path, 'rb') as f:
                 self.send_response(200)
-                # UTF-8 charset is critical to stop symbols like â€¢ appearing
+                # charset=utf-8 fixes strange symbols
                 self.send_header('Content-type', f"{content_type}; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(f.read())
@@ -64,7 +64,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             content_length = int(self.headers['Content-Length'])
-            # CRITICAL FIX: decode('utf-8') prevents 502 errors
+            # Critical decode('utf-8') prevents 502 crash
             post_data = json.loads(self.rfile.read(content_length).decode('utf-8'))
             
             conn = sqlite3.connect(DB_NAME)
