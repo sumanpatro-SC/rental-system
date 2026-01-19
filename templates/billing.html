@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Billing</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -8,15 +9,13 @@
     <div id="header-placeholder"></div>
     <div class="container">
         <h2>Billing (Rented Properties List)</h2>
-        
         <div class="toolbar">
             <input type="text" id="billSearchInput" placeholder="Search Billing..." onkeyup="filterTable('billingTable', 'billSearchInput')">
             <div class="export-btns">
                 <button onclick="downloadCSV('billingTable', 'Billing_Report')" class="btn-edit">Excel Report</button>
-                <button onclick="downloadPDF('billingTable', 'Billing Report')" class="btn-save">PDF Report</button>
+                <button onclick="downloadPDF('billingTable', 'Billing_Report')" class="btn-save">PDF Report</button>
             </div>
         </div>
-
         <table id="billingTable">
             <thead>
                 <tr>
@@ -31,15 +30,12 @@
             <tbody></tbody>
         </table>
     </div>
-
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeQR()">&times;</span>
-            <h3>Billing QR Code</h3>
-            <div id="qrcode"></div>
+            <div id="qrcode" style="display: flex; justify-content: center; padding: 20px;"></div>
         </div>
     </div>
-
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>

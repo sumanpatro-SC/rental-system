@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Load Header & Footer
     fetch('/templates/header.html').then(r => r.text()).then(html => {
         if (document.getElementById('header-placeholder')) document.getElementById('header-placeholder').innerHTML = html;
     });
@@ -6,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById('footer-placeholder')) document.getElementById('footer-placeholder').innerHTML = html;
     });
 
+    // 2. Route Handling based on URL
     const path = window.location.pathname;
     if (path === "/" || path.endsWith("index.html")) loadDashboard();
     if (path === "/add-property") setupAddProperty();
@@ -39,7 +41,7 @@ function setupAddProperty() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        if (res.ok) { window.location.href = '/property-list'; }
+        if (res.ok) window.location.href = '/property-list';
     };
 }
 
@@ -78,27 +80,6 @@ async function loadCustomerPage() {
                 select.appendChild(opt);
             }
         });
-    }
-
-    const custForm = document.getElementById('custForm');
-    if (custForm) {
-        custForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const custId = document.getElementById('custId').value;
-            const body = {
-                name: document.getElementById('cname').value,
-                contact: document.getElementById('cphone').value,
-                property_id: document.getElementById('propSelect').value,
-                date: document.getElementById('bdate').value
-            };
-            await fetch('/api/add-customer', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            if (custId) { await fetch(`/api/billing/${custId}`, { method: 'DELETE' }); }
-            location.reload();
-        };
     }
 
     const resC = await fetch('/api/billing-data');
@@ -140,7 +121,30 @@ async function loadBillingList() {
     }
 }
 
-// --- QR INFO GENERATION (Using Library) ---
+// --- PDF DOWNLOAD (Using jsPDF) ---
+function downloadPDF(tableId, reportName) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text(reportName, 14, 22);
+
+    doc.autoTable({
+        html: `#${tableId}`,
+        startY: 30,
+        theme: 'grid',
+        headStyles: { fillColor: [40, 167, 69] },
+        didParseCell: function(data) {
+            // Hide the last column (Action buttons) in the PDF
+            if (data.column.index === (data.table.columns.length - 1)) {
+                data.cell.text = '';
+            }
+        }
+    });
+
+    doc.save(`${reportName}.pdf`);
+}
+
+// --- QR CODE GENERATION ---
 function viewRowInfo(btn) {
     const row = btn.closest("tr");
     const table = row.closest("table");
@@ -149,7 +153,7 @@ function viewRowInfo(btn) {
     const container = document.getElementById("qrcode");
 
     modal.style.display = "block";
-    container.innerHTML = ""; // Clear old QR
+    container.innerHTML = ""; 
 
     let qrText = "";
     cells.forEach((cell, index) => {
@@ -157,7 +161,6 @@ function viewRowInfo(btn) {
         qrText += `${header}: ${cell.innerText}\n`;
     });
 
-    // Generate real QR Code
     new QRCode(container, {
         text: qrText,
         width: 150,
@@ -165,27 +168,9 @@ function viewRowInfo(btn) {
     });
 }
 
-function viewTableInfo(tableId) {
-    const table = document.getElementById(tableId);
-    const rows = Array.from(table.querySelector("tbody").rows);
-    const modal = document.getElementById("qrModal");
-    const container = document.getElementById("qrcode");
-
-    modal.style.display = "block";
-    container.innerHTML = "<h3>Table Summary</h3>";
-
-    rows.forEach((row) => {
-        if (row.style.display !== "none") {
-            const div = document.createElement("div");
-            div.style.borderBottom = "1px solid #eee";
-            div.style.padding = "5px";
-            div.innerText = row.innerText.replace(/\t/g, " | ");
-            container.appendChild(div);
-        }
-    });
+function closeQR() { 
+    document.getElementById("qrModal").style.display = "none"; 
 }
-
-function closeQR() { document.getElementById("qrModal").style.display = "none"; }
 
 // --- UTILITIES ---
 function downloadCSV(tableId, filename) {
@@ -200,8 +185,6 @@ function downloadCSV(tableId, filename) {
     link.download = filename + ".csv";
     link.click();
 }
-
-function downloadPDF() { window.print(); }
 
 function filterTable(tableId, inputId) {
     const input = document.getElementById(inputId).value.toUpperCase();
@@ -238,9 +221,12 @@ function editCustomer(cust) {
     document.getElementById('cphone').value = cust.contact;
     document.getElementById('bdate').value = cust.date;
     document.getElementById('saveBtn').innerText = "Update Details";
+    
     const select = document.getElementById('propSelect');
     const opt = document.createElement('option');
-    opt.value = cust.p_id; opt.innerHTML = cust.p_name; opt.selected = true;
+    opt.value = cust.p_id; 
+    opt.innerHTML = cust.p_name; 
+    opt.selected = true;
     select.appendChild(opt);
     window.scrollTo(0, 0);
 }

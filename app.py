@@ -20,7 +20,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             with open(file_path, 'rb') as f:
                 self.send_response(200)
-                # charset=utf-8 fixes strange symbols
+                # charset=utf-8 fixes strange symbols like â†•
                 self.send_header('Content-type', f"{content_type}; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(f.read())
@@ -43,7 +43,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         if self.path in routes:
             path, ctype = routes[self.path]
             self.serve_file(path, ctype)
-        
         elif self.path == '/api/properties':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -51,7 +50,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             data = [dict(zip(['id', 'title', 'description', 'price', 'status'], row)) for row in cursor.fetchall()]
             conn.close()
             self.send_json(data)
-        
         elif self.path == '/api/billing-data':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -66,14 +64,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             # Critical decode('utf-8') prevents 502 crash
             post_data = json.loads(self.rfile.read(content_length).decode('utf-8'))
-            
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
 
             if self.path == '/api/add-property':
                 cursor.execute("INSERT INTO properties (title, description, price) VALUES (?, ?, ?)", 
                                (post_data.get('title'), post_data.get('description'), post_data.get('price')))
-            
             elif self.path == '/api/add-customer':
                 cursor.execute("INSERT INTO customers (name, contact, property_id, billing_date) VALUES (?, ?, ?, ?)",
                                (post_data.get('name'), post_data.get('contact'), post_data.get('property_id'), post_data.get('date')))
@@ -83,7 +79,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             conn.close()
             self.send_json({"status": "success"})
         except Exception as e:
-            print(f"POST Error: {e}")
             self.send_error(500, str(e))
 
     def do_DELETE(self):
@@ -91,7 +86,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             item_id = self.path.split('/')[-1]
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
-            
             if 'properties' in self.path:
                 cursor.execute("DELETE FROM properties WHERE id = ?", (item_id,))
             elif 'billing' in self.path:
@@ -100,7 +94,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if res:
                     cursor.execute("UPDATE properties SET status = 'available' WHERE id = ?", (res[0],))
                 cursor.execute("DELETE FROM customers WHERE id = ?", (item_id,))
-                
             conn.commit()
             conn.close()
             self.send_json({"status": "deleted"})
