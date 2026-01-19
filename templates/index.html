@@ -4,16 +4,43 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div id="header-placeholder"></div>
-    <div class="container">
-        <h1>Dashboard</h1>
+    <div class="container dashboard-container">
+        <h1>Welcome, Admin</h1>
+        
         <div class="dashboard-stats">
-            <div class="card">
-                <h3>Available Property Status</h3>
-                <h2 id="avail-count">0</h2>
-                <p>Units Ready for Rent</p>
+            <div class="stat-card available">
+                <i class="fas fa-door-open icon"></i>
+                <div class="stat-info">
+                    <h3 id="avail-count">0</h3>
+                    <p>Available Units</p>
+                </div>
+            </div>
+            <div class="stat-card rented">
+                <i class="fas fa-user-check icon"></i>
+                <div class="stat-info">
+                    <h3 id="rented-count">0</h3>
+                    <p>Active Tenants</p>
+                </div>
+            </div>
+            <div class="stat-card total">
+                <i class="fas fa-building icon"></i>
+                <div class="stat-info">
+                    <h3 id="total-count">0</h3>
+                    <p>Total Properties</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+                <a href="/add-property" class="action-btn"><i class="fas fa-plus"></i> Add Property</a>
+                <a href="/customer-details" class="action-btn"><i class="fas fa-user-plus"></i> New Tenant</a>
+                <a href="/billing" class="action-btn"><i class="fas fa-file-invoice-dollar"></i> View Billing</a>
             </div>
         </div>
     </div>

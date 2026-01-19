@@ -633,3 +633,62 @@ td {
     color: var(--accent);
     margin-bottom: 5px;
 }
+/* Dashboard Specific Layout */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover { transform: translateY(-5px); }
+
+.stat-card .icon {
+    font-size: 2.5rem;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+/* Pastel Colors for Cards */
+.stat-card.available .icon { background: #e1f5fe; color: #03a9f4; }
+.stat-card.rented .icon { background: #e8f5e9; color: #4caf50; }
+.stat-card.total .icon { background: #fff3e0; color: #ff9800; }
+
+.stat-info h3 { font-size: 2rem; margin: 0; color: var(--primary); }
+.stat-info p { margin: 0; color: #666; font-weight: 500; }
+
+/* Quick Actions Grid */
+.quick-actions { margin-top: 50px; }
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    text-decoration: none;
+    background: var(--pastel-blue);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.3s;
+}
+
+.action-btn:hover { opacity: 0.8; }

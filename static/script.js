@@ -16,6 +16,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path === "/billing") loadBillingList();
 });
 
+async function loadDashboard() {
+    const res = await fetch('/api/properties');
+    const data = await res.json();
+    
+    const available = data.filter(p => p.status === 'available').length;
+    const rented = data.filter(p => p.status === 'rented').length;
+    const total = data.length;
+
+    if (document.getElementById('avail-count')) document.getElementById('avail-count').innerText = available;
+    if (document.getElementById('rented-count')) document.getElementById('rented-count').innerText = rented;
+    if (document.getElementById('total-count')) document.getElementById('total-count').innerText = total;
+}
+
+
 // --- DASHBOARD ---
 async function loadDashboard() {
     const res = await fetch('/api/properties');
