@@ -112,9 +112,18 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json; charset=utf-8')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
+    
+    def do_GET(self):
+     if self.path == '/favicon.ico':
+        self.send_response(204)
+        self.end_headers()
+        return
+    # ... rest of your code
 
 if __name__ == '__main__':
     init_db()
-    server = HTTPServer(('0.0.0.0', 8000), RequestHandler)
-    print("Server active at http://localhost:8000")
+    # Render requires the app to listen on the environment's PORT
+    port = int(os.environ.get("PORT", 8000)) 
+    server = HTTPServer(('0.0.0.0', port), RequestHandler)
+    print(f"Server active at http://localhost:8000")
     server.serve_forever()
