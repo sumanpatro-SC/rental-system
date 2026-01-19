@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Load Header & Footer
     fetch('/templates/header.html').then(r => r.text()).then(html => {
         if (document.getElementById('header-placeholder')) document.getElementById('header-placeholder').innerHTML = html;
     });
@@ -6,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById('footer-placeholder')) document.getElementById('footer-placeholder').innerHTML = html;
     });
 
+    // 2. Route Handling based on URL
     const path = window.location.pathname;
     if (path === "/" || path.endsWith("index.html")) loadDashboard();
     if (path === "/add-property") setupAddProperty();
@@ -14,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path === "/billing") loadBillingList();
 });
 
-// --- API DATA ---
+// --- DASHBOARD ---
 async function loadDashboard() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -23,6 +25,7 @@ async function loadDashboard() {
     if (countEl) countEl.innerText = count;
 }
 
+// --- ADD PROPERTY ---
 function setupAddProperty() {
     const form = document.getElementById('propForm');
     if (!form) return;
@@ -42,6 +45,7 @@ function setupAddProperty() {
     };
 }
 
+// --- PROPERTY LIST ---
 async function loadPropertyList() {
     const res = await fetch('/api/properties');
     const data = await res.json();
@@ -61,7 +65,9 @@ async function loadPropertyList() {
     }
 }
 
+// --- CUSTOMER PAGE & ADD CUSTOMER ---
 async function loadCustomerPage() {
+    // Populate Property Dropdown
     const resP = await fetch('/api/properties');
     const props = await resP.json();
     const select = document.getElementById('propSelect');
@@ -77,6 +83,27 @@ async function loadCustomerPage() {
         });
     }
 
+    // Setup Add Customer Form Logic
+    const custForm = document.getElementById('custForm');
+    if (custForm) {
+        custForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('cname').value,
+                contact: document.getElementById('cphone').value,
+                property_id: document.getElementById('propSelect').value,
+                date: document.getElementById('bdate').value
+            };
+            const res = await fetch('/api/add-customer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) window.location.reload();
+        };
+    }
+
+    // Load Registered Customers Table
     const resC = await fetch('/api/billing-data');
     const custs = await resC.json();
     const tbody = document.querySelector("#custTable tbody");
@@ -94,6 +121,7 @@ async function loadCustomerPage() {
     }
 }
 
+// --- BILLING LIST ---
 async function loadBillingList() {
     const res = await fetch('/api/billing-data');
     const data = await res.json();
@@ -116,13 +144,12 @@ async function loadBillingList() {
 
 // --- PDF DOWNLOAD ---
 function downloadPDF(tableId, reportName) {
-    // Check if library is available
-    if (!window.jspdf) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
         alert("Framework is still loading. Please try again in 1 second.");
         return;
     }
 
-    const { jsPDF } = window.jspdf; // Get the framework class
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
     doc.text(reportName, 14, 22);
@@ -133,34 +160,46 @@ function downloadPDF(tableId, reportName) {
         theme: 'grid',
         headStyles: { fillColor: [40, 167, 69] },
         didParseCell: function(data) {
-            // Hide Action column
+            // Hide Action column (last column)
             if (data.column.index === (data.table.columns.length - 1)) {
                 data.cell.text = '';
             }
         }
     });
 
-    doc.save(`${reportName}.pdf`); // Trigger download
+    doc.save(`${reportName}.pdf`);
 }
 
 // --- QR CODE ---
 function viewRowInfo(btn) {
+    if (!window.QRCode) {
+        alert("QR Framework still loading...");
+        return;
+    }
+
     const row = btn.closest("tr");
     const table = row.closest("table");
     const cells = Array.from(row.cells).slice(0, -1);
     const modal = document.getElementById("qrModal");
     const container = document.getElementById("qrcode");
+    
     modal.style.display = "block";
     container.innerHTML = ""; 
+    
     let qrText = "";
     cells.forEach((cell, index) => {
         const header = table.tHead.rows[0].cells[index].innerText.replace(" ↕", "");
         qrText += `${header}: ${cell.innerText}\n`;
     });
+    
     new QRCode(container, { text: qrText, width: 150, height: 150 });
 }
 
-function closeQR() { document.getElementById("qrModal").style.display = "none"; }
+function closeQR() { 
+    if (document.getElementById("qrModal")) {
+        document.getElementById("qrModal").style.display = "none"; 
+    }
+}
 
 // --- UTILITIES ---
 function downloadCSV(tableId, filename) {
@@ -197,9 +236,9 @@ function sortTable(tableId, n) {
     table.setAttribute("data-dir", dir);
 }
 
+// --- DELETE ITEM (FIXED: NO CONFIRMATION) ---
 async function deleteItem(type, id) {
-    if (confirm("Confirm deletion?")) {
-        await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
-        location.reload();
-    }
+    // Confirmation removed - executes immediately
+    await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
+    location.reload();
 }

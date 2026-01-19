@@ -20,7 +20,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         try:
             with open(file_path, 'rb') as f:
                 self.send_response(200)
-                # charset=utf-8 fixes strange symbols like â†•
                 self.send_header('Content-type', f"{content_type}; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(f.read())
@@ -28,6 +27,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_error(404, "File Not Found")
 
     def do_GET(self):
+        # FIX: Handle favicon requests to prevent 502 crashes
+        if self.path == '/favicon.ico':
+            self.send_response(204)
+            self.end_headers()
+            return
+
         routes = {
             '/': ('templates/index.html', 'text/html'),
             '/add-property': ('templates/add_property.html', 'text/html'),
@@ -62,8 +67,10 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             content_length = int(self.headers['Content-Length'])
-            # Critical decode('utf-8') prevents 502 crash
-            post_data = json.loads(self.rfile.read(content_length).decode('utf-8'))
+            # FIX: Ensure UTF-8 decoding to prevent data crashes
+            post_body = self.rfile.read(content_length).decode('utf-8')
+            post_data = json.loads(post_body)
+            
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
 
