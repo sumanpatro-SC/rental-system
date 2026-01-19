@@ -8,25 +8,32 @@
     <div id="header-placeholder"></div>
     <div class="container">
         <h2 id="form-title">Customer Registration</h2>
-        <form id="custForm" class="form-group">
+        <form id="custForm">
             <input type="hidden" id="custId" value="">
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="cname" required>
+                
+                <label>Contact Number</label>
+                <input type="text" id="cphone" required>
+                
+                <label>Property</label>
+                <select id="propSelect" required>
+                    <option value="">-- Choose Available --</option>
+                </select>
+                
+                <label>Billing Date</label>
+                <input type="date" id="bdate" required>
+            </div>
             
-            <input type="text" id="cname" placeholder="Customer Name" required>
-            <input type="text" id="cphone" placeholder="Contact Number" required>
-            
-            <label>Select Available Property:</label>
-            <select id="propSelect" required>
-                <option value="">-- Choose a Property --</option>
-            </select>
-            
-            <input type="date" id="bdate" required>
             <div class="btn-group">
                 <button type="submit" id="saveBtn" class="btn-save">Add Customer</button>
-                <button type="button" id="cancelEdit" style="display:none;" onclick="resetCustForm()">Cancel Edit</button>
+                <button type="button" id="cancelEdit" class="btn-del" style="display:none;" onclick="location.reload()">Cancel</button>
             </div>
         </form>
         
-        <hr>
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+        
         <h3>Registered Customers</h3>
         <table id="custTable">
             <thead>
@@ -35,7 +42,7 @@
                     <th>Contact</th>
                     <th>Property</th>
                     <th>Billing Date</th>
-                    <th>Action</th>
+                    <th style="text-align:right;">Action</th>
                 </tr>
             </thead>
             <tbody></tbody>

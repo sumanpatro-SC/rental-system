@@ -9,22 +9,24 @@
     <div class="container">
         <h2>Add New Property</h2>
         <form id="propForm">
-            <label>Property Title</label>
-            <input type="text" id="title" required>
+            <div class="form-group">
+                <label>Property Title</label>
+                <input type="text" id="title" placeholder="e.g. 3BHK Apartment" required>
+                
+                <label>Description</label>
+                <textarea id="desc" rows="4" placeholder="Enter details..."></textarea>
+                
+                <label>Rent Price (Rupees)</label>
+                <input type="number" id="price" placeholder="5000" required>
+            </div>
             
-            <label>Description</label>
-            <textarea id="desc"></textarea>
-            
-            <label>Rent Price (Rupees)</label>
-            <input type="number" id="price" required>
-            
-            <div style="margin-top:20px;">
-                <button type="submit" style="background:green; color:white; padding:10px;">Save Property</button>
-                <button type="button" onclick="window.location='/'" style="background:red; color:white; padding:10px;">Cancel</button>
+            <div class="btn-group">
+                <button type="submit" class="btn-save">Save Property</button>
+                <button type="button" class="btn-cancel" onclick="window.location='/'">Cancel</button>
             </div>
         </form>
     </div>
-    <div id="header-placeholder"></div>
+    <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>
 </html>
