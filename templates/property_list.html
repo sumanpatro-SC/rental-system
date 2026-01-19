@@ -8,19 +8,37 @@
     <div id="header-placeholder"></div>
     <div class="container">
         <h2>Property List</h2>
+        
+        <div class="toolbar">
+            <input type="text" id="propSearchInput" placeholder="Search Property..." onkeyup="filterTable('propTable', 'propSearchInput')">
+            <div class="export-btns">
+                <button onclick="downloadCSV('propTable', 'Property_List')" class="btn-edit">Export Excel</button>
+                <button onclick="downloadPDF('propTable', 'Property List Report')" class="btn-save">Export PDF</button>
+            </div>
+        </div>
+
         <table id="propTable">
             <thead>
                 <tr>
-                    <th>Serial No.</th>
-                    <th>Property Name</th>
-                    <th>Rent Price (₹)</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th onclick="sortTable('propTable', 0)">Serial No. ↕</th>
+                    <th onclick="sortTable('propTable', 1)">Property Name ↕</th>
+                    <th onclick="sortTable('propTable', 2)">Rent Price (₹) ↕</th>
+                    <th onclick="sortTable('propTable', 3)">Status ↕</th>
+                    <th style="text-align:right;">Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeQR()">&times;</span>
+            <h3>Property QR Code</h3>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>

@@ -35,19 +35,36 @@
         <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
         
         <h3>Registered Customers</h3>
+        <div class="toolbar">
+            <input type="text" id="custSearchInput" placeholder="Search Customers..." onkeyup="filterTable('custTable', 'custSearchInput')">
+            <div class="export-btns">
+                <button onclick="downloadCSV('custTable', 'Customer_Records')" class="btn-edit">Excel</button>
+                <button onclick="downloadPDF('custTable', 'Customer Records')" class="btn-save">PDF</button>
+            </div>
+        </div>
+
         <table id="custTable">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Property</th>
-                    <th>Billing Date</th>
+                    <th onclick="sortTable('custTable', 0)">Name ↕</th>
+                    <th onclick="sortTable('custTable', 1)">Contact ↕</th>
+                    <th onclick="sortTable('custTable', 2)">Property ↕</th>
+                    <th onclick="sortTable('custTable', 3)">Billing Date ↕</th>
                     <th style="text-align:right;">Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeQR()">&times;</span>
+            <h3>Customer QR Code</h3>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>
