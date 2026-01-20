@@ -18,21 +18,31 @@ def init_db():
 class RequestHandler(BaseHTTPRequestHandler):
     def serve_file(self, file_path, content_type):
         try:
+            if not os.path.exists(file_path):
+                self.send_error(404, f"File {file_path} Not Found")
+                return
             with open(file_path, 'rb') as f:
                 self.send_response(200)
                 self.send_header('Content-type', f"{content_type}; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(f.read())
-        except Exception:
-            self.send_error(404, "File Not Found")
+        except Exception as e:
+            self.send_error(500, f"Internal Server Error: {str(e)}")
+
+    def send_json(self, data):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode('utf-8'))
 
     def do_GET(self):
-        # FIX: Handle favicon requests to prevent 502 crashes
+        # 1. Handle favicon (Prevents 502/Crash)
         if self.path == '/favicon.ico':
             self.send_response(204)
             self.end_headers()
             return
 
+        # 2. Static Route Map
         routes = {
             '/': ('templates/index.html', 'text/html'),
             '/add-property': ('templates/add_property.html', 'text/html'),
@@ -45,9 +55,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             '/templates/footer.html': ('templates/footer.html', 'text/html'),
         }
 
+        # 3. Logic for Pages vs API
         if self.path in routes:
             path, ctype = routes[self.path]
             self.serve_file(path, ctype)
+            
         elif self.path == '/api/properties':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -55,6 +67,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             data = [dict(zip(['id', 'title', 'description', 'price', 'status'], row)) for row in cursor.fetchall()]
             conn.close()
             self.send_json(data)
+            
         elif self.path == '/api/billing-data':
             conn = sqlite3.connect(DB_NAME)
             cursor = conn.cursor()
@@ -63,11 +76,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             data = [dict(zip(['id', 'p_name', 'c_name', 'price', 'contact', 'date', 'p_id'], row)) for row in cursor.fetchall()]
             conn.close()
             self.send_json(data)
+        else:
+            self.send_error(404, "Page Not Found")
 
     def do_POST(self):
         try:
             content_length = int(self.headers['Content-Length'])
-            # FIX: Ensure UTF-8 decoding to prevent data crashes
             post_body = self.rfile.read(content_length).decode('utf-8')
             post_data = json.loads(post_body)
             
@@ -107,23 +121,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             self.send_error(500, str(e))
 
-    def send_json(self, data):
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json; charset=utf-8')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode('utf-8'))
-    
-    def do_GET(self):
-     if self.path == '/favicon.ico':
-        self.send_response(204)
-        self.end_headers()
-        return
-    # ... rest of your code
-
 if __name__ == '__main__':
     init_db()
-    # Render requires the app to listen on the environment's PORT
     port = int(os.environ.get("PORT", 8000)) 
     server = HTTPServer(('0.0.0.0', port), RequestHandler)
-    print(f"Server active at http://localhost:8000")
+    print(f"Server active at http://localhost:{port}")
     server.serve_forever()

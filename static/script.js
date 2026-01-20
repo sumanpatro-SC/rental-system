@@ -16,27 +16,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path === "/billing") loadBillingList();
 });
 
-async function loadDashboard() {
-    const res = await fetch('/api/properties');
-    const data = await res.json();
-    
-    const available = data.filter(p => p.status === 'available').length;
-    const rented = data.filter(p => p.status === 'rented').length;
-    const total = data.length;
-
-    if (document.getElementById('avail-count')) document.getElementById('avail-count').innerText = available;
-    if (document.getElementById('rented-count')) document.getElementById('rented-count').innerText = rented;
-    if (document.getElementById('total-count')) document.getElementById('total-count').innerText = total;
-}
-
-
 // --- DASHBOARD ---
 async function loadDashboard() {
-    const res = await fetch('/api/properties');
-    const data = await res.json();
-    const count = data.filter(p => p.status === 'available').length;
-    const countEl = document.getElementById('avail-count');
-    if (countEl) countEl.innerText = count;
+    try {
+        const res = await fetch('/api/properties');
+        const data = await res.json();
+        
+        const available = data.filter(p => p.status === 'available').length;
+        const rented = data.filter(p => p.status === 'rented').length;
+        const total = data.length;
+
+        // Using optional chaining or explicit checks to prevent errors if elements don't exist
+        if (document.getElementById('avail-count')) document.getElementById('avail-count').innerText = available;
+        if (document.getElementById('rented-count')) document.getElementById('rented-count').innerText = rented;
+        if (document.getElementById('total-count')) document.getElementById('total-count').innerText = total;
+    } catch (err) {
+        console.error("Dashboard failed to load:", err);
+    }
 }
 
 // --- ADD PROPERTY ---
@@ -81,7 +77,6 @@ async function loadPropertyList() {
 
 // --- CUSTOMER PAGE & ADD CUSTOMER ---
 async function loadCustomerPage() {
-    // Populate Property Dropdown
     const resP = await fetch('/api/properties');
     const props = await resP.json();
     const select = document.getElementById('propSelect');
@@ -97,7 +92,6 @@ async function loadCustomerPage() {
         });
     }
 
-    // Setup Add Customer Form Logic
     const custForm = document.getElementById('custForm');
     if (custForm) {
         custForm.onsubmit = async (e) => {
@@ -117,7 +111,6 @@ async function loadCustomerPage() {
         };
     }
 
-    // Load Registered Customers Table
     const resC = await fetch('/api/billing-data');
     const custs = await resC.json();
     const tbody = document.querySelector("#custTable tbody");
@@ -158,39 +151,34 @@ async function loadBillingList() {
 
 // --- PDF DOWNLOAD ---
 function downloadPDF(tableId, reportName) {
-    if (!window.jspdf || !window.jspdf.jsPDF) {
-        alert("Framework is still loading. Please try again in 1 second.");
+    const { jsPDF } = window.jspdf || {};
+    if (!jsPDF) {
+        alert("PDF Library not loaded yet.");
         return;
     }
 
-    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     doc.text(reportName, 14, 22);
-
     doc.autoTable({
         html: `#${tableId}`,
         startY: 30,
         theme: 'grid',
         headStyles: { fillColor: [40, 167, 69] },
         didParseCell: function(data) {
-            // Hide Action column (last column)
             if (data.column.index === (data.table.columns.length - 1)) {
                 data.cell.text = '';
             }
         }
     });
-
     doc.save(`${reportName}.pdf`);
 }
 
 // --- QR CODE ---
 function viewRowInfo(btn) {
     if (!window.QRCode) {
-        alert("QR Framework still loading...");
+        alert("QR Framework loading...");
         return;
     }
-
     const row = btn.closest("tr");
     const table = row.closest("table");
     const cells = Array.from(row.cells).slice(0, -1);
@@ -210,9 +198,8 @@ function viewRowInfo(btn) {
 }
 
 function closeQR() { 
-    if (document.getElementById("qrModal")) {
-        document.getElementById("qrModal").style.display = "none"; 
-    }
+    const modal = document.getElementById("qrModal");
+    if (modal) modal.style.display = "none"; 
 }
 
 // --- UTILITIES ---
@@ -239,7 +226,7 @@ function filterTable(tableId, inputId) {
 
 function sortTable(tableId, n) {
     const table = document.getElementById(tableId);
-    const rows = Array.from(table.rows).slice(1);
+    const rows = Array.from(table.tBodies[0].rows);
     const dir = table.getAttribute("data-dir") === "asc" ? "desc" : "asc";
     rows.sort((a, b) => {
         let x = a.cells[n].innerText.toLowerCase();
@@ -250,9 +237,7 @@ function sortTable(tableId, n) {
     table.setAttribute("data-dir", dir);
 }
 
-// --- DELETE ITEM (FIXED: NO CONFIRMATION) ---
 async function deleteItem(type, id) {
-    // Confirmation removed - executes immediately
     await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
     location.reload();
 }
