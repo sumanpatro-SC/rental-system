@@ -142,7 +142,7 @@ async function loadBillingList() {
                 <td>${b.contact}</td>
                 <td>${b.date}</td>
                 <td style="text-align:right;">
-                    <button class="btn-info" onclick="viewRowInfo(this)">QR Info</button>
+                    <button class="btn-info" onclick="viewDetails(${b.id})">View</button>
                     <button class="btn-del" onclick="deleteItem('billing', ${b.id})">Delete</button>
                 </td>
             </tr>`).join('');
@@ -173,33 +173,31 @@ function downloadPDF(tableId, reportName) {
     doc.save(`${reportName}.pdf`);
 }
 
-// --- QR CODE ---
-function viewRowInfo(btn) {
-    if (!window.QRCode) {
-        alert("QR Framework loading...");
-        return;
+// --- view ---
+async function viewDetails(billingId) {
+    const res = await fetch('/api/billing-data');
+    const data = await res.json();
+    
+    // Find the specific person by ID
+    const person = data.find(item => item.id === billingId);
+    
+    if (person) {
+        const container = document.getElementById('detailBody');
+        container.innerHTML = `
+            <p><strong>👤 Tenant Name:</strong> ${person.c_name}</p>
+            <p><strong>📞 Contact No:</strong> ${person.contact}</p>
+            <p><strong>📅 Booking Date:</strong> ${person.date}</p>
+            <hr>
+            <p><strong>🏠 Property Title:</strong> ${person.p_name}</p>
+            <p><strong>💰 Rent Amount:</strong> ₹${person.price}</p>
+            <p><strong>🆔 Property ID:</strong> ${person.p_id}</p>
+        `;
+        document.getElementById('viewModal').style.display = 'block';
     }
-    const row = btn.closest("tr");
-    const table = row.closest("table");
-    const cells = Array.from(row.cells).slice(0, -1);
-    const modal = document.getElementById("qrModal");
-    const container = document.getElementById("qrcode");
-    
-    modal.style.display = "block";
-    container.innerHTML = ""; 
-    
-    let qrText = "";
-    cells.forEach((cell, index) => {
-        const header = table.tHead.rows[0].cells[index].innerText.replace(" ↕", "");
-        qrText += `${header}: ${cell.innerText}\n`;
-    });
-    
-    new QRCode(container, { text: qrText, width: 150, height: 150 });
 }
 
-function closeQR() { 
-    const modal = document.getElementById("qrModal");
-    if (modal) modal.style.display = "none"; 
+function closeView() {
+    document.getElementById('viewModal').style.display = 'none';
 }
 
 // --- UTILITIES ---

@@ -34,12 +34,16 @@
             <tbody></tbody>
         </table>
     </div>
-    <div id="qrModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeQR()">&times;</span>
-            <div id="qrcode" style="display: flex; justify-content: center; padding: 20px;"></div>
-        </div>
+    <div id="viewModal" class="modal">
+    <div class="modal-content detail-card">
+        <span class="close" onclick="closeView()">&times;</span>
+        <h2 style="border-left: 5px solid var(--pastel-blue); padding-left: 10px;">Tenant & Property Details</h2>
+        <hr>
+        <div id="detailBody" style="text-align: left; line-height: 1.8;">
+            </div>
+        <button class="btn-info" style="margin-top: 20px;" onclick="closeView()">Close Details</button>
     </div>
+</div>
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>

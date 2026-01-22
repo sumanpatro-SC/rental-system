@@ -692,3 +692,21 @@ td {
 }
 
 .action-btn:hover { opacity: 0.8; }
+.detail-card {
+    width: 450px !important;
+    padding: 30px;
+    border-radius: 15px;
+    background: #fff;
+}
+
+#detailBody p {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin: 10px 0;
+}
+
+#detailBody strong {
+    color: var(--pastel-blue);
+    display: inline-block;
+    width: 160px;
+}
