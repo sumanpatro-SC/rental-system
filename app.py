@@ -11,7 +11,7 @@ def extract_pdf_text(file_path):
     try:
         # Try PyPDF2 if available (standard library check)
         try:
-            from PyPDF2 import PdfReader
+            from PyPDF2 import PdfReader  # type: ignore
             reader = PdfReader(file_path)
             text = ""
             for page in reader.pages:
