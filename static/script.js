@@ -68,7 +68,6 @@ async function loadPropertyList() {
                 <td>₹${p.price}</td>
                 <td><span class="status-${p.status}">${p.status}</span></td>
                 <td style="text-align:right;">
-                    <button class="btn-info" onclick="viewRowInfo(this)">QR Info</button>
                     <button class="btn-del" onclick="deleteItem('properties', ${p.id})">Delete</button>
                 </td>
             </tr>`).join('');
