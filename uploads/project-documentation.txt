@@ -1,0 +1,494 @@
+# Web Development & Database Fundamentals - Complete Guide
+
+## HTML BASICS
+
+Q: What is HTML?
+A: HTML stands for HyperText Markup Language. It is the standard markup language used to create web pages. HTML uses a system of tags (also called elements) enclosed in angle brackets to structure content on the internet. It provides the semantic and structural foundation for all web content, working alongside CSS for styling and JavaScript for interactivity.
+
+Q: What are HTML tags and elements?
+A: HTML tags are keywords surrounded by angle brackets like <p>, <div>, <h1>. An HTML element consists of opening tag, content, and closing tag. For example: <p>This is a paragraph</p>. Tags tell the browser how to interpret and display the content. Some tags are self-closing like <img/> or <br/>, while others require opening and closing tags.
+
+Q: What is the difference between block and inline elements in HTML?
+A: Block elements take up the full width available and start on a new line. Examples include <div>, <p>, <h1>, <ul>. Inline elements only take up as much width as necessary and do not force a new line. Examples include <span>, <a>, <strong>, <img>. You can change this behavior using CSS display property.
+
+Q: What are semantic HTML tags?
+A: Semantic HTML tags clearly describe their meaning to both the browser and developer. Examples include <header>, <footer>, <nav>, <article>, <section>, <aside>. These tags improve accessibility for screen readers, help with SEO, and make code more readable. They should be used instead of generic <div> tags when the purpose is clear.
+
+Q: What is the HTML document structure?
+A: Every HTML document should have: <!DOCTYPE html> declaration, <html> root element, <head> section containing metadata and <title>, and <body> section containing visible content. The head contains title, meta tags, links to stylesheets, and scripts. The body contains all visible page content like headings, paragraphs, images, and links.
+
+Q: What are forms in HTML and why are they important?
+A: HTML forms allow users to input data which can be sent to a server for processing. Forms use <form> tag and contain input elements like <input>, <textarea>, <select>, <button>. They are essential for user interaction, data collection, user registration, and communication. Forms use GET or POST methods to submit data.
+
+Q: What are input types in HTML forms?
+A: HTML5 provides various input types: text, email, password, number, date, time, checkbox, radio, file, submit, reset, button, url, search, tel, range, color. Each type has specific validation and purpose. For example, email input validates email format, number input only accepts numbers, date input provides a calendar picker.
+
+Q: What is the difference between GET and POST methods?
+A: GET submits form data in the URL as query parameters, is visible in the address bar, has size limits, and is not secure. POST sends data in the request body, is hidden from URL, has no size limit, and is more secure. GET is used for retrieving data, POST for submitting sensitive information like passwords or for creating/updating data.
+
+Q: How do you create a table in HTML?
+A: Tables use <table> tag with <tr> for rows, <td> for data cells, and <th> for header cells. Use <thead>, <tbody>, <tfoot> to organize sections. Use <colspan> and <rowspan> for cells spanning multiple columns or rows. Example: <table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>. Tables should be used for tabular data, not for layout.
+
+Q: What are meta tags and why are they important?
+A: Meta tags provide metadata about the HTML document. Common meta tags include charset (specifies character encoding), viewport (for responsive design), description (for SEO), keywords, author, and refresh. Meta tags go in the <head> section. The viewport meta tag is crucial for mobile responsiveness: <meta name="viewport" content="width=device-width, initial-scale=1">.
+
+Q: What is accessibility in HTML?
+A: Accessibility means making web content usable by everyone including people with disabilities. Best practices include using semantic tags, adding alt text to images, using proper heading hierarchy, providing form labels, using ARIA attributes, and ensuring keyboard navigation. Accessible HTML improves user experience for everyone and is legally required in many jurisdictions.
+
+Q: What are data attributes in HTML?
+A: Data attributes allow you to store custom data in HTML elements. They start with data- prefix like <div data-user-id="123">. You can access them via JavaScript: element.dataset.userId returns "123". They are useful for storing information that doesn't need to be visible but is needed by JavaScript for interactivity or functionality.
+
+Q: What is the difference between rel and href attributes?
+A: Href (hypertext reference) specifies the URL of a link. Rel specifies the relationship between the current document and the linked resource. Common rel values are: stylesheet (CSS), icon (favicon), alternate, author, next, prev. Example: <link rel="stylesheet" href="style.css">. Rel helps browsers and search engines understand the connection between documents.
+
+## CSS BASICS
+
+Q: What is CSS?
+A: CSS stands for Cascading Style Sheets. It is used to style and layout web pages and control visual presentation of HTML elements. CSS allows you to change colors, fonts, spacing, positioning, and layout. CSS works by selecting HTML elements and applying style rules. It separates content (HTML) from presentation (CSS), making code more maintainable.
+
+Q: What are CSS selectors?
+A: Selectors are patterns used to select HTML elements to style. Types include: element selector (p), class selector (.classname), ID selector (#idname), attribute selector ([type="text"]), pseudo-class (:hover, :focus), pseudo-element (::before, ::after), universal selector (*), and combinators (descendant, child, sibling). Selectors can be combined for more specific targeting.
+
+Q: What is CSS specificity?
+A: Specificity determines which CSS rule applies when multiple rules target the same element. Specificity is calculated as: inline styles (1000 points), IDs (100 points), classes and pseudo-classes (10 points), elements (1 point). More specific selectors override less specific ones. Understanding specificity prevents style conflicts. Using !important overrides all specificity but should be avoided.
+
+Q: What is the CSS box model?
+A: The box model consists of content, padding, border, and margin. Content is the actual element. Padding is space inside the border. Border surrounds padding. Margin is space outside the border. Total width = margin + border + padding + content width. Use box-sizing: border-box to include padding and border in the width calculation, simplifying calculations.
+
+Q: What are CSS positioning properties?
+A: Position property values are: static (default, not positioned), relative (positioned relative to normal position), absolute (positioned relative to nearest positioned ancestor), fixed (positioned relative to viewport), sticky (between relative and fixed). Use top, bottom, left, right properties to specify position. Z-index controls layering of positioned elements.
+
+Q: What is the difference between margin and padding?
+A: Margin is the space outside the border, creating distance between elements. Padding is the space inside the border, creating distance between content and border. Margin doesn't have background color, padding does. Margins can collapse between elements (margin collapsing). Padding prevents content from touching the border.
+
+Q: What is Flexbox?
+A: Flexbox (Flexible Box Layout) is a one-dimensional layout system for arranging items in rows or columns. Enable with display: flex on container. Main properties are flex-direction (row, column), justify-content (align horizontally), align-items (align vertically), flex-wrap (wrap items), gap (space between items). Flexbox is ideal for navigation bars, button groups, and simple layouts.
+
+Q: What is CSS Grid?
+A: CSS Grid is a two-dimensional layout system for creating complex layouts with rows and columns. Enable with display: grid on container. Define grid with grid-template-columns and grid-template-rows. Use grid-column and grid-row to place items. Grid is powerful for page layouts, gallery grids, and dashboard designs. Can be combined with Flexbox.
+
+Q: What are CSS media queries?
+A: Media queries allow you to apply different styles based on device characteristics like screen width, height, or orientation. Syntax: @media (max-width: 768px) { styles }. Common breakpoints: 320px (mobile), 768px (tablet), 1024px (laptop). Mobile-first approach starts with mobile styles then adds desktop styles. Essential for responsive design.
+
+Q: What is the difference between em and rem units?
+A: Em is relative to the font-size of the element. 1em = current font-size. Rem (root em) is relative to the root element (html). 1rem = root font-size (usually 16px). Rem is preferred for consistent sizing across the entire page. Em is useful for components that scale relative to their parent. Use pixels for fixed sizes, em/rem for responsive sizing.
+
+Q: What are pseudo-classes and pseudo-elements?
+A: Pseudo-classes select elements in a specific state (:hover, :focus, :active, :visited, :nth-child()). Pseudo-elements represent parts of elements (::before, ::after, ::first-line, ::first-letter). Pseudo-classes use single colon, pseudo-elements use double colon. Pseudo-elements can add content using content property without adding HTML elements.
+
+Q: What is CSS inheritance?
+A: Inheritance means child elements inherit styles from parent elements. Properties like color, font-size, font-family inherit. Properties like margin, padding, border don't inherit. Use inherit keyword to force inheritance. Use initial to reset to initial value. Understand inheritance prevents redundant code and makes CSS more efficient. Not all properties inherit by default.
+
+Q: What are CSS variables?
+A: CSS variables (custom properties) store values that can be reused throughout CSS. Defined with --variable-name. Accessed with var(--variable-name). Defined in root selector for global scope. Example: :root { --color: blue; } then color: var(--color);. Variables enable theme switching, reduce repetition, and make maintenance easier. They cascade and can be overridden.
+
+Q: What is CSS Grid vs Flexbox comparison?
+A: Flexbox is one-dimensional (row OR column). Grid is two-dimensional (rows AND columns). Flexbox is content-first (arranges content). Grid is layout-first (creates structure). Use Flexbox for navigation, buttons, small components. Use Grid for page layout, complex designs. Both can be combined. Flexbox is easier to learn, Grid is more powerful for complex layouts.
+
+Q: What are CSS transitions and animations?
+A: Transitions smoothly change property values over time. Example: transition: color 0.3s ease;. Animations create keyframe-based sequences: @keyframes slide { from {left: 0} to {left: 100px} }. Animations are more powerful, can run independently, can repeat. Transitions require a state change (hover), animations can auto-play. Both improve user experience.
+
+Q: What is CSS overflow?
+A: Overflow property handles content that exceeds container size. Values: visible (default, overflows), hidden (hides overflow), scroll (adds scrollbar), auto (scrollbar when needed). Use overflow-x and overflow-y for specific directions. Overflow-wrap controls word breaking. Text-overflow with ellipsis shows ... for truncated text. Essential for preventing layout breaks.
+
+Q: What are CSS transforms?
+A: Transforms modify element appearance and position in 2D or 3D space without affecting document flow. Functions: translate(), rotate(), scale(), skew(), matrix(). 2D example: transform: translate(50px, 100px) rotate(45deg);. 3D functions: rotateX(), rotateY(), perspective(). Transforms are performant, GPU-accelerated, and don't trigger layout recalculations.
+
+## SQL BASICS
+
+Q: What is SQL?
+A: SQL (Structured Query Language) is the standard language for managing relational databases. It is used to create, read, update, and delete (CRUD) data. SQL is declarative - you specify what you want, not how to get it. SQL works with tables containing rows and columns. Most databases (MySQL, PostgreSQL, SQLite) use SQL.
+
+Q: What are the main SQL commands?
+A: Main commands are DDL (Data Definition Language): CREATE, ALTER, DROP. DML (Data Manipulation Language): SELECT, INSERT, UPDATE, DELETE. DCL (Data Control Language): GRANT, REVOKE. TCL (Transaction Control): COMMIT, ROLLBACK. SELECT is the most common, used for querying data. INSERT, UPDATE, DELETE modify data. CREATE creates tables.
+
+Q: What is a SQL table?
+A: A table is a collection of related data organized in rows (records) and columns (fields). Each row represents one record. Each column represents an attribute. Every table has a primary key - a unique identifier for each row. Tables are related through foreign keys. Tables form the foundation of relational databases. Example: Users table with columns: id, name, email, phone.
+
+Q: What is a primary key?
+A: A primary key uniquely identifies each row in a table. It must contain unique values and cannot be NULL. Every table should have one primary key. Primary key can be a single column (simple) or multiple columns (composite). Example: User ID in Users table. Primary keys enable efficient searching and relationships between tables. By default, integers are used.
+
+Q: What is a foreign key?
+A: A foreign key is a column that references the primary key of another table. It creates relationships between tables. Ensures referential integrity - you can't add data without corresponding parent record. Example: Orders table has customer_id that references customer id in Customers table. Foreign keys prevent orphaned records and maintain data consistency.
+
+Q: What is the SELECT statement?
+A: SELECT retrieves data from tables. Basic syntax: SELECT columns FROM table_name WHERE condition;. SELECT * returns all columns. SELECT column1, column2 returns specific columns. WHERE filters rows. ORDER BY sorts results. LIMIT restricts number of rows. GROUP BY groups rows. HAVING filters grouped data. SELECT is the most important SQL command.
+
+Q: What is the WHERE clause?
+A: WHERE filters rows based on conditions. Operators: = (equal), != or <> (not equal), > (greater), < (less), >= (greater or equal), <= (less or equal). Logical operators: AND (all conditions true), OR (any condition true), NOT (negates condition). LIKE for pattern matching with % and _. IN for multiple values. BETWEEN for ranges.
+
+Q: What is the INSERT statement?
+A: INSERT adds new rows to a table. Syntax: INSERT INTO table_name (column1, column2) VALUES (value1, value2);. You can insert multiple rows: INSERT INTO table_name VALUES (val1, val2), (val3, val4);. If omitting columns, provide values for all columns in table order. INSERT INTO ... SELECT copies data from another table. Triggers data validation.
+
+Q: What is the UPDATE statement?
+A: UPDATE modifies existing data. Syntax: UPDATE table_name SET column1 = value1, column2 = value2 WHERE condition;. Always include WHERE clause - without it, updates all rows. You can update multiple columns in one statement. UPDATE combined with SELECT in WHERE clause. Use UPDATE with calculations: SET salary = salary * 1.1.
+
+Q: What is the DELETE statement?
+A: DELETE removes rows from a table. Syntax: DELETE FROM table_name WHERE condition;. Always include WHERE clause - without it, deletes all rows. Delete triggers foreign key constraints - if another table references the row, delete fails. Use transactions for safety - ROLLBACK if delete fails. DELETE is slower than TRUNCATE for large tables but allows WHERE.
+
+Q: What is the difference between DELETE and TRUNCATE?
+A: DELETE removes rows one by one, slower, can use WHERE, triggers constraints, can rollback. TRUNCATE removes all rows at once, faster, no WHERE, doesn't trigger constraints, resets identity. TRUNCATE frees space, DELETE doesn't. TRUNCATE can't rollback in some databases. Use DELETE for selective deletion, TRUNCATE for removing all rows. TRUNCATE is DDL, DELETE is DML.
+
+Q: What is the ORDER BY clause?
+A: ORDER BY sorts results in ascending (ASC) or descending (DESC) order. Syntax: SELECT * FROM table ORDER BY column ASC;. Default is ASC. You can sort by multiple columns: ORDER BY column1 ASC, column2 DESC. Sort by column position: ORDER BY 1, 2. Sorting happens after WHERE filtering. NULL values appear first in ASC, last in DESC.
+
+Q: What is the LIMIT clause?
+A: LIMIT restricts the number of rows returned. Syntax: SELECT * FROM table LIMIT 10;. OFFSET skips rows: LIMIT 10 OFFSET 5 returns rows 6-15. Shorthand: LIMIT 5, 10 means OFFSET 5 LIMIT 10. Essential for pagination. MySQL uses LIMIT, SQL Server uses TOP. PostgreSQL uses LIMIT OFFSET. Combined with ORDER BY for meaningful results.
+
+Q: What is the DISTINCT keyword?
+A: DISTINCT removes duplicate values from results. Syntax: SELECT DISTINCT column FROM table;. Returns unique values only. Works with multiple columns: SELECT DISTINCT column1, column2;. Returns unique combinations. Useful for finding unique customers, cities, categories. Performance impact with large datasets. Use GROUP BY for more complex grouping with aggregates.
+
+Q: What is the GROUP BY clause?
+A: GROUP BY groups rows with same values in specified column. Syntax: SELECT column, COUNT(*) FROM table GROUP BY column;. Combines with aggregate functions: COUNT, SUM, AVG, MAX, MIN. Returns one row per group. GROUP BY without aggregate shows unique values like DISTINCT. Must include non-aggregated columns in GROUP BY. Null values group together.
+
+Q: What is the HAVING clause?
+A: HAVING filters grouped data after GROUP BY, like WHERE for groups. Syntax: SELECT column, COUNT(*) FROM table GROUP BY column HAVING COUNT(*) > 5;. WHERE filters rows before grouping, HAVING filters after. Only aggregate functions allowed in HAVING conditions. Essential for filtering grouped results. Use WHERE for row filtering, HAVING for group filtering.
+
+Q: What are aggregate functions?
+A: Aggregate functions perform calculations on multiple rows: COUNT (number of rows), SUM (total), AVG (average), MAX (maximum), MIN (minimum). Syntax: SELECT COUNT(*) FROM table;. COUNT(*) counts all rows. COUNT(column) counts non-NULL values. Aggregates ignore NULL values except COUNT(*). Use with GROUP BY for grouped aggregates. Always return single row without GROUP BY.
+
+Q: What is string concatenation in SQL?
+A: Concatenate strings combining multiple values. In MySQL use CONCAT(): CONCAT(first_name, ' ', last_name). In PostgreSQL use ||: first_name || ' ' || last_name. In SQL Server use +: first_name + ' ' + last_name. In SQLite use ||. Useful for creating full names, addresses, messages. Combined with CAST for type conversion.
+
+Q: What are SQL functions?
+A: SQL functions perform operations on data. String functions: LENGTH, SUBSTRING, UPPER, LOWER, TRIM. Numeric functions: ROUND, CEIL, FLOOR, ABS. Date functions: NOW, DATE, DATE_ADD, DATEDIFF. Type functions: CAST, CONVERT. Aggregate functions: COUNT, SUM, AVG. Window functions: ROW_NUMBER, RANK, LAG, LEAD. Functions vary by database.
+
+Q: What are SQL operators?
+A: Comparison operators: =, !=, <>, <, >, <=, >=. Logical operators: AND, OR, NOT. Arithmetic operators: +, -, *, /, %. Bitwise operators: &, |, ^. IN operator for multiple values. BETWEEN for ranges. LIKE for pattern matching. IS NULL for null checks. EXISTS for subquery existence. BETWEEN is inclusive of boundaries.
+
+## SQLITE SPECIFIC
+
+Q: What is SQLite?
+A: SQLite is a lightweight, serverless, file-based SQL database engine. Stores database in single file, no separate server needed. Ideal for mobile apps, small web apps, embedded systems. Supports most SQL features. No authentication or permission system. Single-threaded, suitable for concurrent read, limited concurrent write. Open source, public domain. Python includes sqlite3 module built-in.
+
+Q: How does SQLite differ from MySQL and PostgreSQL?
+A: SQLite is serverless file-based, MySQL and PostgreSQL need servers. SQLite has no user permissions, others have complex auth. SQLite limited concurrency, others handle heavy concurrent load. SQLite no replication, others support replication. SQLite smaller, others more scalable. SQLite perfect for small projects, embedded systems, mobile. MySQL/PostgreSQL for large applications.
+
+Q: What are SQLite data types?
+A: SQLite has five data types: NULL (missing value), INTEGER (whole numbers), REAL (floating-point), TEXT (strings), BLOB (binary data). SQLite has dynamic typing - column can store any type. No boolean type - use 0/1 as FALSE/TRUE. Numeric affinity for calculations, text affinity for strings. Type check with typeof() function. Unlike other databases, SQLite flexible.
+
+Q: How do you create a table in SQLite?
+A: Use CREATE TABLE statement: CREATE TABLE table_name (column_name data_type constraints);. Constraints: PRIMARY KEY, NOT NULL, UNIQUE, DEFAULT, CHECK, FOREIGN KEY. Example: CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE);. If table exists use CREATE TABLE IF NOT EXISTS. AUTOINCREMENT for auto-incrementing IDs.
+
+Q: What is AUTOINCREMENT in SQLite?
+A: AUTOINCREMENT automatically generates sequential ID values for each new row. Syntax: id INTEGER PRIMARY KEY AUTOINCREMENT. By default, INTEGER PRIMARY KEY in SQLite behaves like AUTOINCREMENT. Values always increase, even after deletions. Not recommended for foreign keys to deleted rows. Performance impact - use simple INTEGER PRIMARY KEY if values can repeat. Use LASTROW_ID() for last inserted ID.
+
+Q: What are SQLite constraints?
+A: Constraints enforce data integrity: PRIMARY KEY (unique identifier), FOREIGN KEY (reference another table), UNIQUE (no duplicates), NOT NULL (required), DEFAULT (default value), CHECK (condition validation). PRIMARY KEY is NOT NULL by default. FOREIGN KEY requires parent record exists. UNIQUE allows NULL values. CHECK validates data type/range. ON DELETE CASCADE removes child rows when parent deleted.
+
+Q: How do transactions work in SQLite?
+A: Transactions group multiple SQL statements. Syntax: BEGIN; ... SQL ...; COMMIT; or ROLLBACK;. If error occurs, ROLLBACK undoes changes. Transactions ensure data consistency - all statements execute or none. ROLLBACK recovers from errors. Implicit transaction for single statement. Isolation levels prevent concurrent issues. SQLite locks database during write. Important for critical operations.
+
+Q: What is SQLite WAL mode?
+A: WAL (Write-Ahead Logging) improves SQLite concurrency. Syntax: PRAGMA journal_mode=WAL;. WAL allows readers while writers write. Default mode blocks readers during writes. WAL creates additional files but improves performance. Reduces disk writes. Not suitable for network file systems. Reduces database corruption risk. Best for applications with heavy concurrent access.
+
+Q: How do you backup an SQLite database?
+A: SQLite stores everything in single file - simple backup is file copy. Python: import shutil; shutil.copy('database.db', 'backup.db'). For live database: BEGIN IMMEDIATE; then copy file then COMMIT. Use .dump command: sqlite3 database.db .dump > backup.sql. Restore from dump: sqlite3 new.db < backup.sql. Schedule regular backups for important data.
+
+Q: What are SQLite PRAGMA statements?
+A: PRAGMA are special commands that query/set database settings. Common: PRAGMA database_list (show databases), PRAGMA table_info(table) (show columns), PRAGMA foreign_keys=ON (enable constraints), PRAGMA synchronous=FULL (safety level), PRAGMA journal_mode (transaction mode), PRAGMA busy_timeout (wait time). No official standard, specific to SQLite.
+
+Q: How do you enable foreign keys in SQLite?
+A: Foreign keys are disabled by default for backwards compatibility. Enable with: PRAGMA foreign_keys = ON;. Must be set every connection. Python: conn.execute("PRAGMA foreign_keys = ON"). With foreign keys enabled, DELETE on parent row cascades to children. INSERT without parent record fails. ON DELETE CASCADE removes children. ON UPDATE CASCADE updates children. Ensures referential integrity.
+
+Q: What are SQLite date and time functions?
+A: Functions: date() (YYYY-MM-DD), time() (HH:MM:SS), datetime() (both), julianday() (numeric), strftime() (format). Examples: datetime('now') current timestamp. strftime('%Y-%m-%d', 'now') format date. date('2024-01-15', '+1 day') add days. julianday('2024-01-15') - julianday('2024-01-10') calculates difference. Essential for date calculations.
+
+Q: How do you use LIKE in SQLite?
+A: LIKE matches pattern in text. % matches any characters: '%hello%' contains hello. _ matches single character: 'h_llo' matches hello, hallo, hillo. Case insensitive by default. GLOB for case-sensitive. LIKE patterns: 'A%' starts with A, '%z' ends with z, '%x%' contains x. LIKE '%' matches everything, slower than =. Indexes don't always help LIKE queries.
+
+Q: What is SQLite VACUUM command?
+A: VACUUM defragments database file, reclaims unused space. Rebuilds database file sequentially. Syntax: VACUUM;. Improves query performance, reduces file size after many deletions. Time consuming - locks database. Not needed frequently unless many deletes. Running VACUUM with PRAGMA incremental_vacuum=N does incremental cleanup. Use after bulk delete operations for large dataset cleanup.
+
+## JOIN OPERATIONS
+
+Q: What is a JOIN?
+A: JOIN combines rows from two or more tables based on common column. Essential for relational databases. Types: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, SELF JOIN. Syntax: SELECT * FROM table1 JOIN table2 ON table1.id = table2.id;. Returns combined data from related tables. Foundation of relational database queries.
+
+Q: What is INNER JOIN?
+A: INNER JOIN returns only rows with matching values in both tables. Syntax: SELECT * FROM orders INNER JOIN customers ON orders.customer_id = customers.id;. Returns rows where condition matches. Excludes non-matching rows. Most common join type. Rows without match are discarded. Rows in one table but not other don't appear. Order of tables doesn't matter.
+
+Q: What is LEFT JOIN?
+A: LEFT JOIN returns all rows from left table, matching rows from right table. Unmatched right table rows show NULL. Syntax: SELECT * FROM customers LEFT JOIN orders ON customers.id = orders.customer_id;. Returns all customers with their orders (or NULL). Opposite of RIGHT JOIN. Useful for finding customers without orders. NULL shows no match found.
+
+Q: What is RIGHT JOIN?
+A: RIGHT JOIN returns all rows from right table, matching rows from left table. Opposite of LEFT JOIN. Syntax: SELECT * FROM orders RIGHT JOIN customers ON orders.customer_id = customers.id;. In practice, swap tables and use LEFT JOIN instead. RIGHT JOIN less commonly used. MySQL supports, some databases don't. Equivalent to: SELECT * FROM customers LEFT JOIN orders ...
+
+Q: What is FULL OUTER JOIN?
+A: FULL OUTER JOIN returns all rows from both tables. Unmatched rows show NULL. Syntax: SELECT * FROM table1 FULL OUTER JOIN table2 ON table1.id = table2.id;. Combines LEFT and RIGHT JOIN. Returns everything from both tables. MySQL doesn't support, but can simulate: SELECT * FROM t1 LEFT JOIN t2 ... UNION SELECT * FROM t1 RIGHT JOIN t2 ...
+
+Q: What is CROSS JOIN?
+A: CROSS JOIN returns Cartesian product - every row from left table with every row from right table. Syntax: SELECT * FROM colors CROSS JOIN sizes;. No ON clause needed. Returns rows = table1_rows * table2_rows. Useful for generating combinations. Example: colors (red, blue) cross join sizes (S, M, L) returns 6 rows. Can be memory intensive with large tables.
+
+Q: What is SELF JOIN?
+A: SELF JOIN joins table to itself. Useful for hierarchical data, finding relationships within table. Syntax: SELECT a.name, b.name FROM employees a JOIN employees b ON a.manager_id = b.id;. Requires table alias. Returns employees with their managers. Common for category hierarchies, parent-child relationships. Appears as multiple table references in result.
+
+Q: What is a natural join?
+A: NATURAL JOIN joins tables on columns with same names. Syntax: SELECT * FROM orders NATURAL JOIN customers;. Automatically matches columns with same name. If orders and customers both have customer_id, it matches them. Returns columns once (removes duplicate). Ambiguous if multiple matching columns. Not recommended - explicit ON clause is clearer and safer.
+
+Q: What is the difference between ON and WHERE in joins?
+A: ON specifies join condition - which rows to join. WHERE filters joined results. Syntax: SELECT * FROM t1 JOIN t2 ON t1.id = t2.id WHERE t1.status = 'active';. With INNER JOIN, ON and WHERE behave similarly. With LEFT/RIGHT JOIN, ON affects join, WHERE filters after. ON executes first, WHERE filters results. Important distinction for outer joins.
+
+Q: Can you join more than two tables?
+A: Yes, join multiple tables in one query. Syntax: SELECT * FROM t1 JOIN t2 ON ... JOIN t3 ON ... JOIN t4 ON ...;. Each join reduces matching rows. Order matters for performance. Join most restrictive tables first. Example: customers JOIN orders ON customer.id = orders.customer_id JOIN products ON orders.product_id = products.id. Useful for complex queries.
+
+Q: What is a join condition?
+A: Join condition specifies how tables relate. Uses ON keyword: ON table1.column = table2.column. Typically primary key to foreign key. Can use multiple conditions: ON t1.id = t2.id AND t1.status = t2.status. Can compare different column names. Operators: =, <, >, <=, >=, <>. More complex: ON t1.id = t2.id OR t1.alternate_id = t2.id. Affects which rows combine.
+
+Q: How do you optimize joins?
+A: Best practices: index columns in ON clause, especially foreign keys. Join on primary keys when possible. Filter with WHERE before joining. Join smaller tables first. Use INNER JOIN instead of LEFT when possible - fewer rows. Avoid functions in ON clause - prevents index use. Check query execution plan. Limit columns selected (not SELECT *). Denormalize data for frequently joined data.
+
+Q: What is a Cartesian product?
+A: Cartesian product returns all combinations of rows. Result rows = table1_rows × table2_rows. Happens with CROSS JOIN. Happens with JOIN missing ON clause accidentally. Useful for generating combinations like colors × sizes. Dangerous with large tables - 1000 × 1000 = 1,000,000 rows. Can cause memory issues. Always include ON clause in JOIN statements to avoid accidental Cartesian products.
+
+Q: Can you join with conditions other than equality?
+A: Yes, join conditions can use any operator. SELECT * FROM orders JOIN customers ON orders.customer_id = customers.id AND orders.date >= customers.created_date;. Inequality joins: SELECT * FROM ranges JOIN data ON data.value BETWEEN ranges.min AND ranges.max;. Adds flexibility but can impact performance. Equality joins usually optimized better. Use wisely - complex conditions may slow queries.
+
+## CRUD OPERATIONS
+
+Q: What does CRUD mean?
+A: CRUD stands for Create, Read, Update, Delete - four basic database operations. Create (INSERT) adds new records. Read (SELECT) retrieves data. Update (UPDATE) modifies existing records. Delete (DELETE) removes records. Every database application implements CRUD. Foundation of data management. API endpoints typically map to CRUD: POST for Create, GET for Read, PUT/PATCH for Update, DELETE for Delete.
+
+Q: What is the CREATE operation?
+A: CREATE operation adds new records to database. Implemented with INSERT statement. Syntax: INSERT INTO table (columns) VALUES (values);. Validates constraints (primary key unique, not null enforced). Triggers are executed. Default values applied if not specified. Multiple row insert: VALUES (...), (...), (...);. Returns last inserted ID. Failed inserts rollback if in transaction. Most basic write operation.
+
+Q: What is the READ operation?
+A: READ retrieves existing data from database. Implemented with SELECT statement. Can filter with WHERE, sort with ORDER BY, limit with LIMIT. Return all rows or specific rows. Doesn't modify data. Can use aggregate functions. Can join multiple tables. JOIN combines related data. SELECT is most used operation. Returns result set to application. Read-only, safe operation.
+
+Q: What is the UPDATE operation?
+A: UPDATE modifies existing records. Syntax: UPDATE table SET column = value WHERE condition;. Must include WHERE clause or updates all rows. Can update multiple columns: SET col1 = val1, col2 = val2. Can update based on other values: SET salary = salary * 1.1. Affects only matching rows. Should check how many rows updated. Transaction allows rollback if update is wrong.
+
+Q: What is the DELETE operation?
+A: DELETE removes records from database. Syntax: DELETE FROM table WHERE condition;. Must include WHERE or deletes all rows. Triggers cascade to related tables. Foreign key constraints may prevent delete. Returns number of deleted rows. Check count before delete. ROLLBACK recovers deleted data if transaction not committed. DELETE is permanent - be careful. Backup before bulk delete operations.
+
+Q: How do you handle duplicate records during CREATE?
+A: Prevent duplicates with UNIQUE constraint on columns. Use PRIMARY KEY for absolute uniqueness. Use ON DUPLICATE KEY UPDATE (MySQL) to update if exists. Use INSERT OR REPLACE/INSERT OR IGNORE (SQLite) to handle duplicates. Check for existence before insert: IF NOT EXISTS. Use UPSERT (INSERT ... ON CONFLICT DO UPDATE) in PostgreSQL. Duplicate keys violate constraints, insert fails unless handled.
+
+Q: What is transaction safety in CRUD?
+A: Transactions group CRUD operations ensuring all-or-nothing execution. Syntax: BEGIN; INSERT ...; UPDATE ...; COMMIT; or ROLLBACK;. If error occurs mid-transaction, ROLLBACK undoes all changes. Prevents partial updates corrupting data. Ensures consistency across multiple operations. ACID properties: Atomicity (all-or-nothing), Consistency (valid state), Isolation (no interference), Durability (persists). Critical for important operations.
+
+Q: How do you CRUD with joins?
+A: Can SELECT from joined tables: SELECT * FROM orders JOIN customers ... Returns combined data. Cannot directly INSERT/UPDATE/DELETE through joins - update base tables. INSERT in one table references another: INSERT INTO orders (customer_id) VALUES (5). UPDATE based on join: UPDATE orders SET status = 'shipped' WHERE customer_id IN (SELECT id FROM customers ...). DELETE cascades via foreign keys.
+
+Q: What is bulk CRUD?
+A: Operations on many rows at once. Bulk INSERT: INSERT INTO table VALUES (...), (...), (...); with multiple rows. Bulk UPDATE: UPDATE table SET column = value WHERE condition (affects many rows). Bulk DELETE: DELETE FROM table WHERE condition (many rows). Faster than single-row operations. Reduces network round-trips. Use transactions for safety. Monitor affected row count. Large bulk operations may lock tables.
+
+Q: How do you validate data in CRUD operations?
+A: Database constraints: NOT NULL, UNIQUE, PRIMARY KEY, CHECK, FOREIGN KEY. Application validation before submit. Data type checking - insert wrong type fails. Range validation with CHECK: age > 0 AND age < 150. Pattern validation with LIKE or REGEX. Required vs optional fields. Unique checks prevent duplicates. Foreign keys prevent orphaned records. Validation prevents corrupted data. Validate early, fail fast.
+
+Q: What is error handling in CRUD?
+A: Handle SQL errors gracefully. INSERT/UPDATE/DELETE may fail (constraint violation, data type mismatch). Check error code and message. Unique constraint violation: code 1062 (MySQL). Foreign key violation: code 1452. Transaction on error: ROLLBACK. Application displays user-friendly error message. Log actual error for debugging. Don't expose database errors to users. Try-catch blocks in code. Proper error handling prevents data corruption.
+
+## ADVANCED CONCEPTS
+
+Q: What is database normalization?
+A: Normalization organizes data to reduce redundancy and improve integrity. 1NF (First Normal Form): atomic values, no repeating groups. 2NF (Second): 1NF + all non-key attributes depend on entire primary key. 3NF (Third): 2NF + no transitive dependencies. Denormalization intentionally adds redundancy for performance. Normalized databases need more joins, denormalized need less. Balance between redundancy and performance needed.
+
+Q: What is the difference between normalized and denormalized databases?
+A: Normalized: minimal redundancy, requires multiple tables and joins, slower read due to joins, faster write, saves storage. Denormalized: intentional redundancy, fewer tables and joins, faster read, slower write due to updates, uses more storage. Data warehouse use denormalization (read-heavy), operational systems normalize (write-heavy). Modern databases use hybrid - normalize core, denormalize for performance.
+
+Q: What are window functions?
+A: Window functions perform calculations across rows without grouping. Functions: ROW_NUMBER(), RANK(), DENSE_RANK(), LAG(), LEAD(), FIRST_VALUE(), LAST_VALUE(), SUM() OVER. Syntax: SELECT id, salary, AVG(salary) OVER (PARTITION BY department);. PARTITION BY groups for calculation. ORDER BY determines order. Can rank, access previous/next rows, calculate running totals. Advanced, powerful for analytics.
+
+Q: What are subqueries?
+A: Subqueries (inner queries) execute inside outer query. Syntax: SELECT * FROM table WHERE id IN (SELECT id FROM other_table);. Return single value, single row, or multiple rows. Scalar subquery returns one value: SELECT (SELECT COUNT(*) FROM orders) as total;. Correlated subqueries reference outer query. IN, EXISTS, =, > operators with subqueries. Useful but can be slow - often replaced with joins.
+
+Q: What are indexes and why are they important?
+A: Indexes speed up data retrieval by creating sorted references. Primary key auto-indexed. CREATE INDEX idx_email ON users(email);. Indexes slow down INSERT/UPDATE/DELETE (must update index). Use indexes on frequently searched columns. Avoid indexes on low-cardinality columns (few unique values). Multi-column index: INDEX (column1, column2). Composite index order matters. Analyze query plans to determine useful indexes.
+
+Q: What is query optimization?
+A: Making queries run faster. Techniques: add indexes on WHERE/JOIN columns, avoid SELECT *, filter early with WHERE, use LIMIT, join smaller tables first, avoid functions in WHERE (prevents index use), denormalize for heavy reads. Check execution plan to understand query path. EXPLAIN ANALYZE shows actual execution. Join statistics, data distribution affect optimization. Database statistics must be current.
+
+Q: What are views?
+A: Views are saved SELECT queries appearing as tables. CREATE VIEW view_name AS SELECT ...;. Simplify complex queries. Restrict data access (hide sensitive columns). Used like tables: SELECT * FROM view;. Views are virtual - no separate storage (except materialized views). Update view updates underlying tables (if updatable). Useful for abstraction, security. Can't use certain clauses in views (ORDER BY rarely used).
+
+Q: What are stored procedures?
+A: Stored procedures are pre-written SQL blocks stored in database. CREATE PROCEDURE name() BEGIN ... END;. Accept parameters, return results. Encapsulate business logic. Execute faster (compiled). Improve security (parameterized). Reduce network traffic (logic on server). Difficult to version control. Debugging harder. Not all databases support (SQLite doesn't). Use for complex, frequently executed operations. Balance between database logic and application logic.
+
+Q: What is database replication?
+A: Replication copies data from master to slaves/replicas. Master handles writes, slaves handle reads. Improves performance, adds redundancy. Asynchronous or synchronous. Lag between master and slave updates. Used for load balancing, disaster recovery, backups. Challenges: consistency issues if write to slave, conflicts if multiple writes. Not needed for single-file databases like SQLite. Important for production systems.
+
+Q: What is database sharding?
+A: Sharding (horizontal partitioning) splits data across multiple servers by key (user ID ranges). Each shard holds subset of data. Improves scalability, reduces load. Challenges: shard key selection, cross-shard queries complex, rebalancing difficult. Application must know which shard. Increases complexity. Alternative: vertical partitioning splits columns. SQLite doesn't support natively - application responsibility.
+
+Q: What is eventually consistent data?
+A: In distributed systems, replicas may temporarily have different data. Reads may return stale data. Eventually all nodes converge to same state. Improves availability and performance. Acceptable for non-critical data (user feeds, analytics). Unacceptable for financial transactions. Conflict resolution needed. Trading consistency for availability. BASE model vs ACID. Modern nosql databases use eventual consistency.
+
+Q: What are triggers?
+A: Triggers are automatic actions executing on data changes. Syntax: CREATE TRIGGER after_insert_users AFTER INSERT ON users FOR EACH ROW BEGIN ... END;. Execute before/after insert/update/delete. Update related tables, validate data, log changes, enforce rules. Useful but add complexity, hidden behavior. Hard to debug. Stored in database so version control difficult. Overuse creates maintenance burden.
+
+Q: What is the N+1 query problem?
+A: Query pattern causing excessive database hits. Fetch 100 users (1 query), then for each fetch their orders (100 queries) = 101 queries. Solution: JOIN table: SELECT users.*, orders.* FROM users JOIN orders. Or batch fetch: SELECT orders WHERE user_id IN (user1, user2, ...). Common in ORMs. Monitor query count. Use include/eager loading in ORMs.
+
+Q: What is database locking?
+A: Locks prevent concurrent conflicts. Row lock locks single row. Table lock locks entire table. Shared lock allows multiple reads. Exclusive lock allows single writer. Deadlock: two transactions waiting each other. Transaction A locks row 1 waits for row 2, Transaction B locks row 2 waits for row 1. Timeout breaks deadlock. Lock order prevents deadlocks. Critical for multi-user systems.
+
+Q: How do you handle database migration?
+A: Migrations change database schema over time. Version control schema changes. Forward migration adds tables/columns. Backward migration (rollback) removes changes. Tools: Alembic (Python), Liquibase, Flyway. Challenges: production safety, no downtime migrations. Techniques: add column with default, deploy code, migrate data, remove old column. Backward compatible changes safer. Test migrations thoroughly. Large tables migration slow.
+
+Q: What is data normalization vs consistency?
+A: Normalization: eliminating redundancy. Consistency: all data accurate/valid. Related but different. Normalized database with errors is inconsistent. Denormalized database with consistency rules is consistent. Transactions ensure consistency. Constraints enforce consistency. Referential integrity (foreign keys) prevent inconsistency. Normalization reduces redundancy that could cause inconsistency. Both important for data quality.
+
+Q: What are database transactions modes?
+A: Isolation levels define transaction visibility: Read Uncommitted (dirty reads possible), Read Committed (no dirty reads), Repeatable Read (consistent snapshot), Serializable (complete isolation). Higher isolation = lower concurrency. SQLite uses serializable mode primarily. Phantom reads possible in some levels. Dirty read: reading uncommitted data. Lost updates: later write overwrites earlier. Choose level balancing safety and performance.
+
+Q: What is recursive query?
+A: Query referencing itself, useful for hierarchical data. WITH RECURSIVE cte AS (base_case UNION ALL recursive_case) SELECT * FROM cte;. Example: find all employees under manager recursively. Base case: direct reports. Recursive case: reports of reports. Depth limit prevents infinite loops. Not all databases support (SQLite does). Useful for organizational hierarchies, category trees, path finding.
+
+Q: What is query caching?
+A: Caching query results to avoid recomputation. Cache stores result set in memory. Next identical query returns cached result instantly. Cache invalidation on data change. Challenges: knowing when to invalidate, stale data risks. Cache memory overhead. Most effective for read-heavy, change-infrequent data. Redis/Memcached common. Application-level caching more flexible than database caching.
+
+Q: What are common SQL vulnerabilities?
+A: SQL Injection: unsanitized input in queries. Fix: parameterized queries/prepared statements. Cross-site scripting (XSS): unescaped output. Authentication/authorization bypasses: weak permissions. NoSQL injection: similar to SQL. Prevention: input validation, parameterized queries, output escaping, least privilege permissions. Security reviews, penetration testing. Never trust user input.
+
+Q: What is ACID compliance?
+A: Atomicity: all-or-nothing transactions. Consistency: valid state before/after. Isolation: concurrent transactions don't interfere. Durability: committed data persists. Relational databases (MySQL, PostgreSQL, SQLite) ACID. NoSQL databases may not be fully ACID. Trade-off between ACID guarantees and performance/scalability. Transactions ensure ACID. Important for financial, critical data. Some databases choose performance over full ACID.
+
+## ADDITIONAL HTML QUESTIONS
+
+Q: What is form validation and how do you implement it?
+A: Form validation checks user input before submission. HTML5 attributes: required, pattern, min, max, step, type. Example: <input type="email" required pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">. JavaScript validation: check values before submit. Server-side validation essential for security. Real-time validation improves UX. Don't rely only on client-side - always validate server-side. Provide clear error messages.
+
+Q: What is the difference between <div> and <section>?
+A: <div> is generic container with no semantic meaning. <section> is semantic - represents thematic grouping of content. Use <section> when content is related and thematically grouped. Use <div> for styling/layout only. Screenreaders understand <section> meaning. <section> improves accessibility and SEO. Each <section> typically has heading. Overusing <section> decreases semantic value. Use semantic elements appropriately.
+
+Q: What is the <canvas> element?
+A: <canvas> provides surface for drawing graphics via JavaScript. Resolution dependent on attributes. Syntax: <canvas id="myCanvas" width="200" height="100"></canvas>. JavaScript: const ctx = canvas.getContext('2d');. Can draw shapes, text, images, animations. Used for graphs, animations, games. Performance better than SVG for complex graphics. Pixel-based raster graphics, not vector. Requires JavaScript - not accessible if JS disabled.
+
+Q: What is SVG and how is it different from Canvas?
+A: SVG (Scalable Vector Graphics) is XML-based vector format. Resolution independent - scales without quality loss. Canvas is pixel-based raster. SVG: accessible, searchable, styleable with CSS. Canvas: better for complex graphics, pixel manipulation. SVG easier to animate, update. Canvas better performance for many objects. SVG in HTML: <svg><circle cx="50" cy="50" r="40"/></svg>. Choose based on use case.
+
+Q: What are data attributes and how do you use them?
+A: Data attributes store custom data: <div data-id="123" data-status="active">. Access in JavaScript: element.dataset.id returns "123". Use for storing IDs, states without visible content. CSS can access: div[data-status="active"] { color: red; }. JSON serialization: JSON.stringify(element.dataset). Useful for component initialization, tracking, analytics.
+
+Q: What is the <template> tag?
+A: <template> holds HTML not rendered initially. Content inert until cloned. Syntax: <template id="mytemplate"><div>Content</div></template>. JavaScript: const temp = document.getElementById('mytemplate'); const clone = temp.content.cloneNode(true); document.body.appendChild(clone);. Useful for reusable HTML patterns, frameworks. Hidden by default. No execution of scripts inside. Prevents duplicate IDs from being registered.
+
+Q: What is the difference between attribute and property?
+A: Attributes defined in HTML: <input value="hello">. Properties in DOM object: inputElement.value. Attributes static in HTML. Properties reflect current state. Change property doesn't always update attribute. getAttribute('value') returns HTML attribute. element.value returns property. Properties and attributes can be different. Use properties in JavaScript for current values. Attributes in HTML for initial state.
+
+Q: What is the <article> tag used for?
+A: <article> semantic tag for self-contained content. Blog posts, news articles, comments, product reviews. Content makes sense standalone. Nested articles allowed for nested comments. Has own header/footer. Example: <article><h2>Blog Post</h2><p>Content...</p></article>. Multiple <article> on same page OK. Improves SEO and accessibility. Use instead of <div> for article-like content.
+
+Q: What is the <aside> tag?
+A: <aside> represents content indirectly related to main content. Sidebars, related links, ads, footnotes, pull quotes. Syntax: <aside><h3>Related</h3>...</aside>. Not necessarily sidebar - can be within main content. Improves semantic structure. Accessible to assistive technology. Can contain <nav>, <section>. Multiple <aside> allowed. Use for tangential, not primary, content.
+
+Q: What is the difference between <strong> and <bold>?
+A: <strong> semantic - emphasizes importance. <b> (bold) no semantic meaning - just styling. <strong> for importance, critical words. <b> for stylistic boldness (keywords, tech terms). Screen readers recognize <strong>. <b> treated like regular text. <em> vs <i> similar distinction. Semantic tags improve accessibility. Use <strong>/<em> for meaning, <b>/<i> for styling only.
+
+Q: What are Web Components?
+A: Web Components are reusable custom HTML elements. Three technologies: Custom Elements, Shadow DOM, HTML Templates. Create: class MyElement extends HTMLElement {}. encapsulation with Shadow DOM. Syntax: <my-element attribute="value"></my-element>. Framework-agnostic, works with vanilla JS. Encapsulation prevents style leakage. Reusable across projects. Browser support good but not universal. Learning curve steeper than simple elements.
+
+## ADDITIONAL CSS QUESTIONS
+
+Q: What is CSS preprocessor and why use it?
+A: Preprocessor extends CSS with variables, nesting, functions. Popular: SASS/SCSS, Less, Stylus. Compiles to regular CSS. SCSS example: $color: blue; .btn { color: $color; &:hover { color: darken($color, 10%); } }. Benefits: code reuse, nesting reduces repetition, mixins for patterns, functions for calculations. Drawback: build step required. Source maps for debugging.
+
+Q: What is BEM naming convention?
+A: BEM (Block Element Modifier) CSS naming standard. Block: standalone component (button). Element: part of block (button__text). Modifier: variant or state (button--primary). Example: .button__text--disabled. Prevents naming conflicts, improves readability, scales well. Verbose but explicit. Improves CSS maintainability. Widely used in production. Example: .card { } .card__header { } .card__header--dark { }.
+
+Q: What are CSS custom properties and their scope?
+A: Custom properties (variables) scoped to selector. :root { --primary: blue; } global scope. .header { --primary: red; } local scope. Inheritance: children inherit parent variables. Override: later declarations override earlier. Can use calc(): --width: calc(100% - 20px);. Fallback: color: var(--color, blue);. Dynamic - can change with JavaScript. Browser support good. Powerful for theming.
+
+Q: What is CSS containment and its benefits?
+A: CSS containment limits element's impact on page. contain: layout; prevents external layout. contain: paint; prevents overflow. contain: size; assumes fixed size. contain: content; all three. Benefits: performance optimization, paint reduction, layout recalculation reduction. Critical for complex pages. Browser applies containment rules. Performance measurable with DevTools. Advanced optimization technique. Use wisely - can break layouts.
+
+Q: What are CSS aspect ratios?
+A: aspect-ratio property maintains width-to-height ratio. Syntax: aspect-ratio: 16 / 9; or aspect-ratio: 1;. Auto-sizes height based on width. Useful for images, videos, embeds. Example: img { width: 100%; aspect-ratio: 16/9; }. Modern browser support. Prevents layout shift. Better than padding-bottom hack. Responsive media without JavaScript.
+
+Q: What is CSS object-fit and object-position?
+A: object-fit controls how content fills container: contain (fit whole), cover (fill but crop), fill (stretch), scale-down (smaller of contain/original). object-position sets alignment: center, top, bottom, left, right. Example: img { width: 100%; height: 200px; object-fit: cover; object-position: center; }. Works with <img>, <video>. Prevents distortion. Cleaner than background-image.
+
+Q: What is the CSS :has() selector?
+A: :has() selects element if child/sibling matches. Syntax: div:has(> p) selects div with child p. div:has(+ p) selects div with sibling p. Powerful for conditional styling. Example: ul:has(li.active) { border: 2px solid; }. Browser support improving. Parent selector finally possible. Enables complex layouts without classes. Requires careful use - may slow browser.
+
+Q: What are CSS logical properties?
+A: Logical properties adapt to writing direction (LTR, RTL, vertical). margin-start/end instead of margin-left/right. padding-block instead of padding-top/bottom. block-size instead of height. inline-size instead of width. Better internationalization. Example: p { margin-block: 1em; margin-inline: 0; }. Browser support modern. Useful for multilingual sites. Future-proof CSS. Improves accessibility.
+
+Q: What is CSS @supports rule?
+A: @supports tests CSS feature support at runtime. Syntax: @supports (display: grid) { .grid { display: grid; } }. Provides fallback. Prevents errors in unsupported browsers. JavaScript alternative: CSS.supports('display: grid'). Useful for experimental features. Graceful degradation. Example: test flex support and fallback to float. Modern approach to progressive enhancement.
+
+Q: What is CSS will-change property?
+A: will-change hints browser which properties will animate. Syntax: .box:hover { will-change: transform; }. Tells browser to prepare GPU acceleration. Improves animation performance. Use sparingly - has performance cost. Remove when animation done. Don't set on parent of many elements. Useful for expensive animations. Browser optimizes rendering accordingly.
+
+## ADDITIONAL SQL QUESTIONS
+
+Q: What is CASE statement in SQL?
+A: CASE evaluates conditions returning different values. Syntax: SELECT CASE WHEN condition THEN value WHEN condition THEN value ELSE value END;. Simple syntax: CASE value WHEN 1 THEN 'one' WHEN 2 THEN 'two' ELSE 'other' END;. Works in SELECT, WHERE, ORDER BY. Example: CASE WHEN age < 18 THEN 'minor' ELSE 'adult' END. Powerful for conditional logic.
+
+Q: What are Common Table Expressions (CTEs)?
+A: CTEs define temporary result set for query. Syntax: WITH cte_name AS (SELECT ...) SELECT * FROM cte_name;. Improves readability for complex queries. Can reference other CTEs. Recursive CTEs for hierarchical data. Example: WITH RECURSIVE emp_hierarchy AS (...). Once query ends, CTE discarded. Scope limited to single query. Easier than subqueries for complex logic.
+
+Q: What is UNION and UNION ALL?
+A: UNION combines results from multiple queries, removes duplicates. UNION ALL keeps duplicates (faster). Columns must match count and type. Syntax: SELECT col FROM t1 UNION SELECT col FROM t2;. ORDER BY applies to final result. NULL values treated same. UNION slower than UNION ALL (deduplication). Use UNION ALL if no duplicates needed. Alternative to OR conditions.
+
+Q: What is EXCEPT and INTERSECT?
+A: EXCEPT returns rows from first query not in second. INTERSECT returns rows in both queries. Syntax: SELECT col FROM t1 EXCEPT SELECT col FROM t2;. All three operations (UNION, EXCEPT, INTERSECT) work similarly. Column matching required. Deduplicates results. Performance considerations. Used less than UNION. Useful for set operations on different tables.
+
+Q: What is the COALESCE function?
+A: COALESCE returns first non-NULL value. Syntax: COALESCE(column1, column2, default_value);. Example: COALESCE(phone, email, 'No contact') returns first available. Works with multiple columns. Useful for handling NULL values. Simpler than nested CASE. Alternative to IFNULL (MySQL) or ISNULL (SQL Server). Performance good. Essential for data cleanup.
+
+Q: What is NULLIF function?
+A: NULLIF returns NULL if two expressions equal, otherwise first expression. Syntax: NULLIF(col1, col2);. Example: NULLIF(0, numerator / denominator) prevents division by zero. Used with COALESCE: COALESCE(NULLIF(value, 0), default);. Prevent specific values. Useful for conditional NULL. Different from regular NULL comparison.
+
+Q: What is EXPLAIN statement?
+A: EXPLAIN shows query execution plan without executing. Syntax: EXPLAIN SELECT ...;. Shows how database will process query. Identifies slow queries, unnecessary table scans, index usage. EXPLAIN ANALYZE shows actual vs estimated. Helps optimize queries. Shows row counts, access methods. Different databases have different formats. Essential for performance tuning. Reveals missing indexes.
+
+Q: What are string functions in SQL?
+A: Common: CONCAT (join strings), SUBSTRING (extract part), LENGTH (length), UPPER/LOWER (case), TRIM (remove spaces), REPLACE (substitute). Example: CONCAT(first_name, ' ', last_name) creates full name. SUBSTRING('hello', 1, 3) returns 'hel'. TRIM removes leading/trailing spaces. INSTR finds position. REVERSE reverses string. Functions vary by database.
+
+Q: What are mathematical functions in SQL?
+A: Common: ABS (absolute), ROUND (round number), CEIL/CEILING (round up), FLOOR (round down), SQRT (square root), POWER (exponentiation), MOD (remainder). Example: ROUND(price, 2) rounds to 2 decimals. ABS(-5) returns 5. CEIL(4.2) returns 5. FLOOR(4.8) returns 4. SQRT(16) returns 4. Used for calculations. Database-specific functions.
+
+Q: What is DISTINCT on multiple columns?
+A: DISTINCT removes duplicate rows based on multiple columns. Syntax: SELECT DISTINCT col1, col2 FROM table;. Removes rows where both columns match. Different from DISTINCT on single column. Returns unique combinations. Example: SELECT DISTINCT country, city finds unique city-country pairs. DISTINCT vs GROUP BY - similar results but different approaches. DISTINCT simpler for just deduplication.
+
+Q: What is OFFSET in pagination?
+A: OFFSET skips rows before returning limit. Syntax: SELECT * FROM table LIMIT 10 OFFSET 20;. Returns rows 21-30. Pagination: page 1 = OFFSET 0 LIMIT 10, page 2 = OFFSET 10 LIMIT 10. Shorthand: LIMIT 10, 20 (offset, limit). Large OFFSET slow - scans all skipped rows. Cursor-based pagination faster for large datasets. KEYSET pagination more efficient.
+
+Q: What is HAVING vs WHERE?
+A: WHERE filters rows before grouping. HAVING filters groups after GROUP BY. WHERE uses WHERE col = value. HAVING uses HAVING COUNT(*) > 5. WHERE faster - filters early. HAVING for aggregate filtering. Example: WHERE age > 18 (row level) vs HAVING COUNT(*) > 2 (group level). Can use both: WHERE filters rows, HAVING filters groups.
+
+## ADDITIONAL ADVANCED QUESTIONS
+
+Q: What is denormalization and when to use it?
+A: Intentionally storing redundant data to improve query performance. Add frequently joined columns to reduce JOINs. Denormalize read-heavy tables. Trade-off: faster reads, slower writes, data consistency risks. Example: store customer name in Orders table. Duplicate data must sync. Update both places when customer name changes. Use for analytical tables, read-heavy systems. Avoid for transactional systems.
+
+Q: What is database partitioning?
+A: Dividing large table into smaller physical partitions. Range partitioning: by date ranges. List partitioning: by specific values. Hash partitioning: by hash function. Improves query performance on partitioned columns. Easier maintenance - rebuild partitions. Archival - move old partitions. Queries scanning fewer partitions faster. Complexity in queries. Not all databases support. PostgreSQL, MySQL support partitioning.
+
+Q: What is batch processing?
+A: Processing large data in groups. Batch INSERT: INSERT INTO table VALUES (...), (...), (...);. Batch UPDATE: UPDATE table SET col = value WHERE id IN (list). More efficient than row-by-row. Reduces network round-trips. Fewer transactions. Monitor memory - batch size limits. Lock tables less with smaller batches. Logging difficult - less granular. Best for ETL, imports.
+
+Q: What is data archival?
+A: Moving old data to separate storage. Keep hot data in main database. Archive cold data to archive database/storage. Improves main database performance. Reduced backup size. Meets compliance - keep for X years. Restore from archive when needed. Archive infrequently accessed data. Complex to implement - query spans both databases. Important for long-running systems.
+
+Q: What is the difference between VARCHAR and TEXT?
+A: VARCHAR(n) variable length up to n. TEXT variable length unlimited (some DBs). VARCHAR indexed faster. TEXT slower for full queries. Storage: VARCHAR exactly stores used + length marker. TEXT similar but no limit. MySQL VARCHAR up to 65535 with row limit. For large text use TEXT. For limited strings use VARCHAR. PostgreSQL no practical difference.
+
+Q: What is database clustering and replication?
+A: Clustering: multiple servers as one database for redundancy. Replication: copies data to other servers. Master-slave replication: one writer many readers. Multi-master: multiple writers (conflict resolution). Improves availability, read performance. Increases complexity. Network overhead. Replication lag possible. Used for high availability. Not for small databases. Expensive infrastructure.
+
+Q: What is the CAP theorem?
+A: States distributed systems can guarantee only two of three: Consistency (all nodes same data), Availability (always responsive), Partition tolerance (survives network issues). Most systems choose AP over C or CP over A. SQL databases choose CP. NoSQL choose AP. Trade-offs inherent in distributed systems. Understand trade-offs when designing. Financial systems need C, social media can use AP. Constraints impossible to overcome.
+
+Q: What is read-through vs write-through caching?
+A: Read-through: check cache first, load from DB if miss. Write-through: write to cache and DB immediately. Read-through: faster reads, cache misses. Write-through: consistency, slower writes. Write-behind: write to cache immediately, DB asynchronously (risky). Cache-aside: application manages cache. Read-through simpler. Choose based on consistency needs. Consistency more important than speed for critical data.
+
+Q: What is the difference between hot and cold data?
+A: Hot data: frequently accessed, should be in main memory/fast storage. Cold data: infrequently accessed, can be in archive/slow storage. Tiering: hot on SSD, warm on HDD, cold in archive. TTL (time-to-live) moves data from hot to cold. Improves performance, reduces costs. Compress cold data. Hot/cold distinction improves system design. Monitor access patterns.
+
+Q: What is prepared statement and parameterized query?
+A: Prepared statement pre-compiles SQL structure, then executes with parameters. Syntax: prepared = db.prepare("SELECT * FROM users WHERE id = ?"); prepared.execute([123]);. Parameterized query separates SQL from data. Prevents SQL injection. Parameters escaped automatically. Reuse prepared statements for efficiency. Database validates parameters. Slower first execution, faster repeated. Always use for user input.
+
+Q: What is query result caching?
+A: Storing query results to avoid recomputation. Cache exact query and result. Invalidate when data changes. Challenge: when to invalidate. Full refresh vs selective invalidation. Time-based: cache expires after X time. Event-based: invalidate on INSERT/UPDATE. Manual: application invalidates. Query result cache: transparent to application. Most effective for read-heavy, slow-changing data. Redis/Memcached common. Can save significant latency.
+
+Q: What is lazy loading vs eager loading?
+A: Lazy loading: load related data only when accessed. Eager loading: load related data upfront. Example: load user, then load orders when accessed (lazy) vs load user with orders (eager). Lazy: reduced memory, N+1 query problem. Eager: fewer queries, more memory. ORMs typically support both. Use eager for known related data. Lazy for optional relationships. Balance needed.
+
+Q: What is the difference between DESC and ASC with NULL?
+A: ASC: NULL values appear first. DESC: NULL values appear last. NULLS FIRST/NULLS LAST override default. Syntax: SELECT * FROM table ORDER BY column NULLS LAST;. Inconsistent across databases. SQL Server, PostgreSQL support explicit control. MySQL doesn't have NULLS FIRST syntax. Use CASE to control: CASE WHEN col IS NULL THEN 1 ELSE 0 END works everywhere.
+
+Q: What is statement vs prepared statement performance?
+A: Statement: parse, compile, execute every time. Prepared: parse once, execute many times. Prepared faster for repeated queries. Network round-trips reduced with batch. SQL injection prevented with prepared. Prepared requires more setup. Single-use queries: negligible difference. Frequently executed: significant improvement. Always use prepared for security. Security more important than minor performance gain.

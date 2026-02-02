@@ -56,6 +56,8 @@ def search_pdf_content(query):
             # Split into paragraphs and find matching ones
             paragraphs = text.split('\n\n')
             for para in paragraphs:
+                if len(results) >= 3:  # Stop as soon as we have 3 results
+                    break
                 if len(para.strip()) > 20 and any(word in para.lower() for word in query_lower.split()):
                     results.append(para.strip()[:500])  # Limit to 500 chars per result
             
@@ -65,7 +67,7 @@ def search_pdf_content(query):
             print(f"Error processing {file_path}: {e}")
             continue
     
-    return results if results else None
+    return results[:3] if results else None  # Ensure max 3 results
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
