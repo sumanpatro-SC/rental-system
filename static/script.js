@@ -545,13 +545,19 @@ function sendWidgetMessage(message) {
     userMsg.innerHTML = `<p>${escapeHtml(message)}</p>`;
     displayArea.appendChild(userMsg);
 
-    // Bot response
+    // Bot response (async - try predefined topics first, then PDF search)
     const botMsg = document.createElement('div');
     botMsg.className = 'widget-message bot-message';
-    
-    const response = generateBotResponse(message.toLowerCase());
-    botMsg.innerHTML = `<p>${response}</p>`;
+    botMsg.innerHTML = '<p>⏳ Looking for an answer...</p>';
     displayArea.appendChild(botMsg);
+
+    // Generate response (may be async for PDF search)
+    generateBotResponse(message.toLowerCase(), (response) => {
+        botMsg.innerHTML = `<p>${response}</p>`;
+        setTimeout(() => {
+            displayArea.scrollTop = displayArea.scrollHeight;
+        }, 100);
+    });
 
     // Scroll to latest message
     setTimeout(() => {
@@ -559,7 +565,28 @@ function sendWidgetMessage(message) {
     }, 100);
 }
 
-function generateBotResponse(message) {
+function searchPDFAndRespond(query, botMsg) {
+    fetch(`/api/search-pdf?q=${encodeURIComponent(query)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'found' && data.results.length > 0) {
+                const resultHtml = data.results
+                    .map((r, i) => `<p><strong>Result ${i + 1}:</strong> ${escapeHtml(r)}</p>`)
+                    .join('');
+                botMsg.innerHTML = `<p><strong>📄 Found in documentation:</strong></p>${resultHtml}`;
+            } else {
+                botMsg.innerHTML = '<p>😕 I could not find an answer in my documentation. Please try asking about Backend, Database, Frontend, CSS, or Scaling.</p>';
+            }
+            const displayArea = document.getElementById('widget-display');
+            if (displayArea) displayArea.scrollTop = displayArea.scrollHeight;
+        })
+        .catch(err => {
+            console.error('PDF search error:', err);
+            botMsg.innerHTML = '<p>⚠️ Could not search documentation. Please try another question.</p>';
+        });
+}
+
+function generateBotResponse(message, callback) {
     // Topic matching -> show the detailed section and return a short reply
     const mapping = [
         {keys: ['backend','server','http.server','do_get','do_post','cors','threading'], section: 'backend'},
@@ -574,22 +601,42 @@ function generateBotResponse(message) {
             if (message.includes(k)) {
                 // show section content in the display area
                 try { displayWidgetInfo(m.section); } catch (e) {}
-                return `Showing <strong>${WIDGET_DATA[m.section].title}</strong> below.`;
+                if (callback) callback(`Showing <strong>${WIDGET_DATA[m.section].title}</strong> below.`);
+                return;
             }
         }
     }
 
     if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-        return '👋 Hello! Use the buttons to view detailed project sections or ask about Backend, Database, Frontend, CSS, or Scaling.';
+        if (callback) callback('👋 Hello! Use the buttons to view detailed project sections or ask about Backend, Database, Frontend, CSS, or Scaling.');
+        return;
     }
     if (message.includes('help') || message.includes('how')) {
-        return '🤝 Try asking: "backend architecture", "database schema", "frontend interactivity", "css responsive", or "scaling".';
+        if (callback) callback('🤝 Try asking: "backend architecture", "database schema", "frontend interactivity", "css responsive", or "scaling".');
+        return;
     }
     if (message.includes('thanks') || message.includes('thank')) {
-        return '😊 You\'re welcome! Ask another question or click a section button.';
+        if (callback) callback('😊 You\'re welcome! Ask another question or click a section button.');
+        return;
     }
 
-    return '💡 I can answer questions about Backend, Database, Frontend, CSS, and Scaling. Try one of those keywords.';
+    // No keyword match - search PDFs
+    fetch(`/api/search-pdf?q=${encodeURIComponent(message)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'found' && data.results.length > 0) {
+                const resultHtml = data.results
+                    .map((r, i) => `<strong>📄 Result ${i + 1}:</strong> ${escapeHtml(r)}`)
+                    .join('<br><br>');
+                if (callback) callback(resultHtml);
+            } else {
+                if (callback) callback('💡 I don\'t have information about that topic. Try asking about Backend, Database, Frontend, CSS, or Scaling.');
+            }
+        })
+        .catch(err => {
+            console.error('PDF search error:', err);
+            if (callback) callback('⚠️ Could not search documentation. Please try another question.');
+        });
 }
 
 function escapeHtml(text) {

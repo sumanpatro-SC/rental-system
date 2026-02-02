@@ -2,8 +2,70 @@ import sqlite3
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+import glob
 
 DB_NAME = "database.db"
+
+def extract_pdf_text(file_path):
+    """Extract text from PDF file or read text file directly"""
+    try:
+        # Try PyPDF2 if available (standard library check)
+        try:
+            from PyPDF2 import PdfReader
+            reader = PdfReader(file_path)
+            text = ""
+            for page in reader.pages:
+                text += page.extract_text() + "\n"
+            return text
+        except ImportError:
+            # PyPDF2 not available, skip PDF files
+            return None
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def search_pdf_content(query):
+    """Search all PDFs and TXT files in uploads folder for matching content"""
+    pdf_dir = "uploads"
+    if not os.path.exists(pdf_dir):
+        return None
+    
+    # Search both PDF and TXT files
+    pdf_files = glob.glob(os.path.join(pdf_dir, "*.pdf"))
+    txt_files = glob.glob(os.path.join(pdf_dir, "*.txt"))
+    all_files = pdf_files + txt_files
+    
+    if not all_files:
+        return None
+    
+    query_lower = query.lower()
+    results = []
+    
+    for file_path in all_files:
+        try:
+            # Handle text files directly
+            if file_path.endswith('.txt'):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    text = f.read()
+            else:
+                # Handle PDF files
+                text = extract_pdf_text(file_path)
+                if not text:
+                    continue
+            
+            # Split into paragraphs and find matching ones
+            paragraphs = text.split('\n\n')
+            for para in paragraphs:
+                if len(para.strip()) > 20 and any(word in para.lower() for word in query_lower.split()):
+                    results.append(para.strip()[:500])  # Limit to 500 chars per result
+            
+            if len(results) >= 3:  # Return top 3 matches
+                break
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+            continue
+    
+    return results if results else None
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
@@ -77,6 +139,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             data = [dict(zip(['id', 'p_name', 'c_name', 'price', 'contact', 'date', 'p_id'], row)) for row in cursor.fetchall()]
             conn.close()
             self.send_json(data)
+        
+        elif self.path.startswith('/api/search-pdf?q='):
+            query = self.path.split('q=', 1)[1].replace('+', ' ').replace('%20', ' ')
+            results = search_pdf_content(query)
+            if results:
+                self.send_json({"status": "found", "results": results})
+            else:
+                self.send_json({"status": "not_found", "results": []})
+        
         else:
             self.send_error(404, "Page Not Found")
 
