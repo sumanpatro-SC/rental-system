@@ -173,6 +173,8 @@ function downloadPDF(tableId, reportName) {
 }
 
 // --- view ---
+let currentBillingData = null;
+
 async function viewDetails(billingId) {
     const res = await fetch('/api/billing-data');
     const data = await res.json();
@@ -181,6 +183,7 @@ async function viewDetails(billingId) {
     const person = data.find(item => item.id === billingId);
     
     if (person) {
+        currentBillingData = person;
         const container = document.getElementById('detailBody');
         container.innerHTML = `
             <p><strong>👤 Tenant Name:</strong> ${person.c_name}</p>
@@ -191,12 +194,74 @@ async function viewDetails(billingId) {
             <p><strong>💰 Rent Amount:</strong> ₹${person.price}</p>
             <p><strong>🆔 Property ID:</strong> ${person.p_id}</p>
         `;
+        document.getElementById('qrcodeContainer').style.display = 'none';
+        document.getElementById('qrcode').innerHTML = '';
         document.getElementById('viewModal').style.display = 'block';
+    }
+}
+
+function generateQRCode() {
+    if (!currentBillingData) {
+        alert('Please open details first');
+        return;
+    }
+    
+    const qrcodeDiv = document.getElementById('qrcode');
+    const qrcodeContainer = document.getElementById('qrcodeContainer');
+    
+    // Clear the previous QR code completely
+    qrcodeDiv.innerHTML = '';
+    
+    // Create compact QR code data with tenant and property information
+    const qrData = `Name: ${currentBillingData.c_name}\nPhone: ${currentBillingData.contact}\nProperty: ${currentBillingData.p_name}\nRent: ₹${currentBillingData.price}\nDate: ${currentBillingData.date}`;
+    
+    try {
+        // Make sure QRCode library is available
+        if (typeof QRCode === 'undefined') {
+            console.error('QRCode library not loaded');
+            alert('QR Code library is not loaded. Please refresh the page.');
+            return;
+        }
+        
+        // Generate QR code with lower error correction level to handle more data
+        const qrCode = new QRCode(qrcodeDiv, {
+            text: qrData,
+            width: 200,
+            height: 200,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.L  // Changed from H to L (Low) to encode more data
+        });
+        
+        // Show the container
+        qrcodeContainer.style.display = 'block';
+        console.log('QR Code generated successfully');
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        // Try with even more compact data if first attempt fails
+        try {
+            qrcodeDiv.innerHTML = '';
+            const compactData = `${currentBillingData.c_name}|${currentBillingData.contact}|${currentBillingData.p_name}|${currentBillingData.price}`;
+            new QRCode(qrcodeDiv, {
+                text: compactData,
+                width: 200,
+                height: 200,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.L
+            });
+            qrcodeContainer.style.display = 'block';
+            console.log('QR Code generated with compact format');
+        } catch (fallbackError) {
+            console.error('Error even with compact format:', fallbackError);
+            alert('Error generating QR code. The data might be too large.');
+        }
     }
 }
 
 function closeView() {
     document.getElementById('viewModal').style.display = 'none';
+    currentBillingData = null;
 }
 
 // --- UTILITIES ---
