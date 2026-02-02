@@ -309,79 +309,43 @@ async function deleteItem(type, id) {
 
 // --- CHAT WIDGET ---
 const WIDGET_DATA = {
-    tech: {
-        title: "🛠️ Tech Stack",
+    backend: {
+        title: "🔧 Backend Architecture & Server Logic",
         content: `
             <div class="widget-message bot-message">
-                <p><strong>Backend:</strong> Python HTTP Server</p>
-                <p><strong>Database:</strong> SQLite3</p>
-                <p><strong>Frontend:</strong> Vanilla JavaScript</p>
-                <p><strong>Styling:</strong> CSS3</p>
-                <p><strong>Libraries:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>jsPDF - PDF Generation</li>
-                    <li>QRCode.js - QR Code Generator</li>
-                    <li>Font Awesome - Icons</li>
-                </ul>
+                <p>The backend uses Python's native <strong>http.server</strong> module with manual route handling in <code>do_GET()</code> and <code>do_POST()</code>. Requests are parsed by reading <code>Content-Length</code> and decoding JSON from <code>self.rfile</code>. CORS and basic auth are implemented via headers. The server is single-threaded by default but can be scaled using <code>ThreadingMixIn</code>.</p>
             </div>
         `
     },
-    languages: {
-        title: "💻 Programming Languages",
+    data: {
+        title: "🗄️ Data Management & SQL Integrity",
         content: `
             <div class="widget-message bot-message">
-                <p><strong>Python 3.x</strong> - Backend Server & Database Operations</p>
-                <p><strong>JavaScript (ES6+)</strong> - Frontend Interactivity & DOM Manipulation</p>
-                <p><strong>HTML5</strong> - Markup Structure</p>
-                <p><strong>CSS3</strong> - Responsive Styling & Animations</p>
-                <p><strong>SQL</strong> - Database Queries</p>
+                <p>Persistence uses <strong>SQLite3</strong> (single-file DB). The schema links <code>properties</code> and <code>customers</code> via <code>property_id</code>. SQL uses parameterized queries to prevent injection. Referential integrity is enforced with <code>ON DELETE CASCADE</code> and joins/aggregations are used for reports and revenue calculations.</p>
             </div>
         `
     },
-    features: {
-        title: "⭐ Key Features",
+    frontend: {
+        title: "🖥️ Frontend Interactivity (ES6+)",
         content: `
             <div class="widget-message bot-message">
-                <p><strong>Property Management:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>Add & Delete Properties</li>
-                    <li>Track Property Status (Available/Rented)</li>
-                </ul>
-                <p><strong>Tenant Management:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>Add & Remove Tenants</li>
-                    <li>Billing Information</li>
-                </ul>
-                <p><strong>Reporting & Export:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>PDF Report Generation</li>
-                    <li>CSV Export</li>
-                    <li>QR Code Generation</li>
-                </ul>
-                <p><strong>Dashboard:</strong> Real-time Statistics & Quick Actions</p>
+                <p>The UI is built with vanilla JavaScript (ES6+). Async operations use <code>fetch()</code> with <code>async/await</code>. DOM is updated dynamically with template literals. Event delegation and client-side validation are used for robustness; table updates often modify the DOM directly for snappy UX.</p>
             </div>
         `
     },
-    database: {
-        title: "🗄️ Database Schema",
+    css: {
+        title: "🎨 Responsive UI & CSS Design",
         content: `
             <div class="widget-message bot-message">
-                <p><strong>Properties Table:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>id - Primary Key</li>
-                    <li>title - Property Name</li>
-                    <li>description - Details</li>
-                    <li>price - Monthly Rent</li>
-                    <li>status - available/rented</li>
-                </ul>
-                <p><strong>Customers Table:</strong></p>
-                <ul style="margin: 8px 0;">
-                    <li>id - Primary Key</li>
-                    <li>name - Tenant Name</li>
-                    <li>contact - Phone Number</li>
-                    <li>property_id - FK to Properties</li>
-                    <li>billing_date - Rental Date</li>
-                </ul>
+                <p>Styling is pure CSS3 using Flexbox and Grid for layout. Media queries enable responsive behavior and a CSS variable-based Dark Mode is supported. Transitions provide subtle UX feedback and status classes (e.g. <code>status-available</code>) give clear visual cues.</p>
+            </div>
+        `
+    },
+    scaling: {
+        title: "🚀 Feature Integration & Scaling",
+        content: `
+            <div class="widget-message bot-message">
+                <p>Reporting uses <strong>jsPDF</strong> and CSV exports; QRCode.js generates property QR codes. For production scaling the plan includes migrating to PostgreSQL, adding pagination, role-based auth, encrypted payments, and stronger security layers.</p>
             </div>
         `
     }
@@ -404,9 +368,81 @@ function initializeWidget() {
     const widgetSendBtn = document.getElementById('widget-send');
     const widgetInput = document.getElementById('widget-input');
 
-    // Toggle widget window
-    widgetIcon?.addEventListener('click', () => {
-        widgetChat?.classList.toggle('hidden');
+    const widgetContainerEl = document.getElementById('widget-container');
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    // Restore saved position
+    try {
+        const saved = localStorage.getItem('widgetPos');
+        if (saved && widgetContainerEl) {
+            const pos = JSON.parse(saved);
+            widgetContainerEl.style.right = 'auto';
+            widgetContainerEl.style.bottom = 'auto';
+            widgetContainerEl.style.left = (pos.left || 20) + 'px';
+            widgetContainerEl.style.top = (pos.top || (window.innerHeight - widgetContainerEl.offsetHeight - 20)) + 'px';
+        }
+    } catch (e) {
+        console.warn('Could not restore widget position', e);
+    }
+
+    // Helper to position chat in opposite quadrant
+    function positionChat() {
+        if (!widgetChat || !widgetIcon || !widgetContainerEl) return;
+
+        const containerRect = widgetContainerEl.getBoundingClientRect();
+        const iconSize = 60; // icon width/height
+        const chatWidth = 360;
+        const chatHeight = 600;
+        const gap = 12;
+        const screenCenterX = window.innerWidth / 2;
+        const screenCenterY = window.innerHeight / 2;
+
+        let left = 'auto';
+        let right = 'auto';
+        let top = 'auto';
+        let bottom = 'auto';
+
+        // Determine which quadrant the icon is in
+        const isRight = containerRect.left > screenCenterX;
+        const isTop = containerRect.top < screenCenterY;
+
+        // Position chat in the opposite quadrant
+        if (isRight && isTop) {
+            // Icon in top-right → chat opens left + down
+            left = -chatWidth - gap + 'px';
+            top = iconSize + gap + 'px';
+        } else if (!isRight && isTop) {
+            // Icon in top-left → chat opens right + down
+            right = -chatWidth - gap + 'px';
+            top = iconSize + gap + 'px';
+        } else if (isRight && !isTop) {
+            // Icon in bottom-right → chat opens left + up
+            left = -chatWidth - gap + 'px';
+            bottom = iconSize + gap + 'px';
+        } else {
+            // Icon in bottom-left → chat opens right + up
+            right = -chatWidth - gap + 'px';
+            bottom = iconSize + gap + 'px';
+        }
+
+        // Apply positioning
+        widgetChat.style.left = left;
+        widgetChat.style.right = right;
+        widgetChat.style.top = top;
+        widgetChat.style.bottom = bottom;
+    }
+
+    // Toggle widget window (only when not dragging)
+    widgetIcon?.addEventListener('click', (e) => {
+        if (isDragging) return;
+        if (widgetChat?.classList.contains('hidden')) {
+            positionChat();
+            widgetChat?.classList.remove('hidden');
+        } else {
+            widgetChat?.classList.add('hidden');
+        }
     });
 
     // Close widget
@@ -437,6 +473,53 @@ function initializeWidget() {
             widgetSendBtn?.click();
         }
     });
+
+    // DRAG HANDLERS (mouse + touch)
+    function onDragMove(e) {
+        e.preventDefault();
+        isDragging = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const left = Math.max(8, Math.min(clientX - dragOffsetX, window.innerWidth - widgetContainerEl.offsetWidth - 8));
+        const top = Math.max(8, Math.min(clientY - dragOffsetY, window.innerHeight - widgetContainerEl.offsetHeight - 8));
+        widgetContainerEl.style.left = left + 'px';
+        widgetContainerEl.style.top = top + 'px';
+        widgetContainerEl.style.right = 'auto';
+        widgetContainerEl.style.bottom = 'auto';
+    }
+
+    function onDragEnd() {
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('touchend', onDragEnd);
+        widgetIcon?.classList.remove('grabbing');
+        // save position
+        try {
+            const rect = widgetContainerEl.getBoundingClientRect();
+            localStorage.setItem('widgetPos', JSON.stringify({ left: Math.round(rect.left), top: Math.round(rect.top) }));
+        } catch (e) {}
+        // short delay: avoid click after drag
+        setTimeout(() => { isDragging = false; }, 0);
+    }
+
+    function onDragStart(e) {
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = widgetContainerEl.getBoundingClientRect();
+        dragOffsetX = clientX - rect.left;
+        dragOffsetY = clientY - rect.top;
+        isDragging = false;
+        widgetIcon?.classList.add('grabbing');
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
+    }
+
+    widgetIcon?.addEventListener('mousedown', onDragStart);
+    widgetIcon?.addEventListener('touchstart', onDragStart, { passive: false });
 }
 
 function displayWidgetInfo(section) {
@@ -477,29 +560,36 @@ function sendWidgetMessage(message) {
 }
 
 function generateBotResponse(message) {
-    if (message.includes('tech') || message.includes('stack') || message.includes('technology')) {
-        return '📚 Check the <strong>Tech Stack</strong> button above to learn about our technologies!';
+    // Topic matching -> show the detailed section and return a short reply
+    const mapping = [
+        {keys: ['backend','server','http.server','do_get','do_post','cors','threading'], section: 'backend'},
+        {keys: ['sqlite','database','sql','schema','foreign','cascade','integrity','parameterized'], section: 'data'},
+        {keys: ['javascript','es6','fetch','dom','async','await','template','event','delegation'], section: 'frontend'},
+        {keys: ['css','responsive','flexbox','grid','media','dark mode','ui'], section: 'css'},
+        {keys: ['scale','scal','postgres','pagination','security','roles','payment','gateway'], section: 'scaling'}
+    ];
+
+    for (const m of mapping) {
+        for (const k of m.keys) {
+            if (message.includes(k)) {
+                // show section content in the display area
+                try { displayWidgetInfo(m.section); } catch (e) {}
+                return `Showing <strong>${WIDGET_DATA[m.section].title}</strong> below.`;
+            }
+        }
     }
-    if (message.includes('language') || message.includes('programming')) {
-        return '💻 Click the <strong>Languages</strong> button to see what we use!';
-    }
-    if (message.includes('feature') || message.includes('can')) {
-        return '⭐ Visit <strong>Features</strong> to see all capabilities!';
-    }
-    if (message.includes('database') || message.includes('data')) {
-        return '🗄️ Check the <strong>Database</strong> section to learn our schema!';
-    }
+
     if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-        return '👋 Hello! Great to meet you. Use the buttons above to explore the project!';
+        return '👋 Hello! Use the buttons to view detailed project sections or ask about Backend, Database, Frontend, CSS, or Scaling.';
     }
     if (message.includes('help') || message.includes('how')) {
-        return '🤝 Click any info button above to learn about different aspects of this project!';
+        return '🤝 Try asking: "backend architecture", "database schema", "frontend interactivity", "css responsive", or "scaling".';
     }
     if (message.includes('thanks') || message.includes('thank')) {
-        return '😊 You\'re welcome! Feel free to ask any other questions!';
+        return '😊 You\'re welcome! Ask another question or click a section button.';
     }
-    
-    return '💡 Try asking about: Tech Stack, Languages, Features, or Database!';
+
+    return '💡 I can answer questions about Backend, Database, Frontend, CSS, and Scaling. Try one of those keywords.';
 }
 
 function escapeHtml(text) {

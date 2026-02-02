@@ -740,10 +740,20 @@ td {
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
+/* Draggable icon affordances */
+.widget-icon {
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.widget-icon.grabbing {
+    cursor: grabbing;
+}
+
 .widget-chat {
     position: absolute;
-    bottom: 90px;
-    right: 0;
     width: 360px;
     max-height: 600px;
     background: white;
