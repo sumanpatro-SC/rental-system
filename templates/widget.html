@@ -1,0 +1,64 @@
+<!-- Chat Widget -->
+<div id="widget-container">
+    <!-- Widget Icon (Bottom-Right) -->
+    <div id="widget-icon" class="widget-icon">
+        <i class="fas fa-question-circle"></i>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="widget-chat" class="widget-chat hidden">
+        <div class="widget-header">
+            <h3>Project Info</h3>
+            <button id="widget-close" class="widget-close">&times;</button>
+        </div>
+        
+        <div class="widget-content">
+            <div class="widget-message bot-message">
+                <p><strong>Hello! 👋 How may I help you?</strong></p>
+                <p>Click below to learn about this project:</p>
+            </div>
+
+            <!-- Info Sections -->
+            <div id="widget-info-sections" class="info-sections">
+                <div class="info-item">
+                    <button class="info-btn" data-section="tech">
+                        <i class="fas fa-code"></i> Tech Stack
+                    </button>
+                </div>
+                <div class="info-item">
+                    <button class="info-btn" data-section="languages">
+                        <i class="fas fa-language"></i> Languages
+                    </button>
+                </div>
+                <div class="info-item">
+                    <button class="info-btn" data-section="features">
+                        <i class="fas fa-star"></i> Features
+                    </button>
+                </div>
+                <div class="info-item">
+                    <button class="info-btn" data-section="database">
+                        <i class="fas fa-database"></i> Database
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Display Area -->
+            <div id="widget-display" class="widget-display"></div>
+
+            <!-- Quick Info Section -->
+            <div class="widget-message bot-message quick-info">
+                <p><strong>📊 Project Stats</strong></p>
+                <ul>
+                    <li><strong>Type:</strong> Property Rental Management System</li>
+                    <li><strong>Version:</strong> 1.0</li>
+                    <li><strong>License:</strong> MIT</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-footer">
+            <input type="text" id="widget-input" placeholder="Ask a question..." />
+            <button id="widget-send" class="widget-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>

@@ -53,6 +53,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             '/static/script.js': ('static/script.js', 'application/javascript'),
             '/templates/header.html': ('templates/header.html', 'text/html'),
             '/templates/footer.html': ('templates/footer.html', 'text/html'),
+            '/templates/widget.html': ('templates/widget.html', 'text/html'),
         }
 
         # 3. Logic for Pages vs API

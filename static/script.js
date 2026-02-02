@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById('footer-placeholder')) document.getElementById('footer-placeholder').innerHTML = html;
     });
 
-    // 2. Route Handling based on URL
+    // 2. Load Widget
+    loadWidget();
+
+    // 3. Route Handling based on URL
     const path = window.location.pathname;
     if (path === "/" || path.endsWith("index.html")) loadDashboard();
     if (path === "/add-property") setupAddProperty();
@@ -302,4 +305,210 @@ function sortTable(tableId, n) {
 async function deleteItem(type, id) {
     await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
     location.reload();
+}
+
+// --- CHAT WIDGET ---
+const WIDGET_DATA = {
+    tech: {
+        title: "🛠️ Tech Stack",
+        content: `
+            <div class="widget-message bot-message">
+                <p><strong>Backend:</strong> Python HTTP Server</p>
+                <p><strong>Database:</strong> SQLite3</p>
+                <p><strong>Frontend:</strong> Vanilla JavaScript</p>
+                <p><strong>Styling:</strong> CSS3</p>
+                <p><strong>Libraries:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>jsPDF - PDF Generation</li>
+                    <li>QRCode.js - QR Code Generator</li>
+                    <li>Font Awesome - Icons</li>
+                </ul>
+            </div>
+        `
+    },
+    languages: {
+        title: "💻 Programming Languages",
+        content: `
+            <div class="widget-message bot-message">
+                <p><strong>Python 3.x</strong> - Backend Server & Database Operations</p>
+                <p><strong>JavaScript (ES6+)</strong> - Frontend Interactivity & DOM Manipulation</p>
+                <p><strong>HTML5</strong> - Markup Structure</p>
+                <p><strong>CSS3</strong> - Responsive Styling & Animations</p>
+                <p><strong>SQL</strong> - Database Queries</p>
+            </div>
+        `
+    },
+    features: {
+        title: "⭐ Key Features",
+        content: `
+            <div class="widget-message bot-message">
+                <p><strong>Property Management:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>Add & Delete Properties</li>
+                    <li>Track Property Status (Available/Rented)</li>
+                </ul>
+                <p><strong>Tenant Management:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>Add & Remove Tenants</li>
+                    <li>Billing Information</li>
+                </ul>
+                <p><strong>Reporting & Export:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>PDF Report Generation</li>
+                    <li>CSV Export</li>
+                    <li>QR Code Generation</li>
+                </ul>
+                <p><strong>Dashboard:</strong> Real-time Statistics & Quick Actions</p>
+            </div>
+        `
+    },
+    database: {
+        title: "🗄️ Database Schema",
+        content: `
+            <div class="widget-message bot-message">
+                <p><strong>Properties Table:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>id - Primary Key</li>
+                    <li>title - Property Name</li>
+                    <li>description - Details</li>
+                    <li>price - Monthly Rent</li>
+                    <li>status - available/rented</li>
+                </ul>
+                <p><strong>Customers Table:</strong></p>
+                <ul style="margin: 8px 0;">
+                    <li>id - Primary Key</li>
+                    <li>name - Tenant Name</li>
+                    <li>contact - Phone Number</li>
+                    <li>property_id - FK to Properties</li>
+                    <li>billing_date - Rental Date</li>
+                </ul>
+            </div>
+        `
+    }
+};
+
+function loadWidget() {
+    fetch('/templates/widget.html').then(r => r.text()).then(html => {
+        const widgetContainer = document.createElement('div');
+        widgetContainer.innerHTML = html;
+        document.body.appendChild(widgetContainer);
+        initializeWidget();
+    }).catch(err => console.error('Failed to load widget:', err));
+}
+
+function initializeWidget() {
+    const widgetIcon = document.getElementById('widget-icon');
+    const widgetChat = document.getElementById('widget-chat');
+    const widgetClose = document.getElementById('widget-close');
+    const infoBtns = document.querySelectorAll('.info-btn');
+    const widgetSendBtn = document.getElementById('widget-send');
+    const widgetInput = document.getElementById('widget-input');
+
+    // Toggle widget window
+    widgetIcon?.addEventListener('click', () => {
+        widgetChat?.classList.toggle('hidden');
+    });
+
+    // Close widget
+    widgetClose?.addEventListener('click', () => {
+        widgetChat?.classList.add('hidden');
+    });
+
+    // Info section buttons
+    infoBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.dataset.section;
+            displayWidgetInfo(section);
+        });
+    });
+
+    // Send message
+    widgetSendBtn?.addEventListener('click', () => {
+        const message = widgetInput?.value.trim();
+        if (message) {
+            sendWidgetMessage(message);
+            widgetInput.value = '';
+        }
+    });
+
+    // Enter key to send
+    widgetInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            widgetSendBtn?.click();
+        }
+    });
+}
+
+function displayWidgetInfo(section) {
+    const displayArea = document.getElementById('widget-display');
+    if (!displayArea || !WIDGET_DATA[section]) return;
+
+    const data = WIDGET_DATA[section];
+    displayArea.innerHTML = data.content;
+
+    // Scroll to content
+    setTimeout(() => {
+        displayArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+}
+
+function sendWidgetMessage(message) {
+    const displayArea = document.getElementById('widget-display');
+    if (!displayArea) return;
+
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'widget-message user-message';
+    userMsg.innerHTML = `<p>${escapeHtml(message)}</p>`;
+    displayArea.appendChild(userMsg);
+
+    // Bot response
+    const botMsg = document.createElement('div');
+    botMsg.className = 'widget-message bot-message';
+    
+    const response = generateBotResponse(message.toLowerCase());
+    botMsg.innerHTML = `<p>${response}</p>`;
+    displayArea.appendChild(botMsg);
+
+    // Scroll to latest message
+    setTimeout(() => {
+        displayArea.scrollTop = displayArea.scrollHeight;
+    }, 100);
+}
+
+function generateBotResponse(message) {
+    if (message.includes('tech') || message.includes('stack') || message.includes('technology')) {
+        return '📚 Check the <strong>Tech Stack</strong> button above to learn about our technologies!';
+    }
+    if (message.includes('language') || message.includes('programming')) {
+        return '💻 Click the <strong>Languages</strong> button to see what we use!';
+    }
+    if (message.includes('feature') || message.includes('can')) {
+        return '⭐ Visit <strong>Features</strong> to see all capabilities!';
+    }
+    if (message.includes('database') || message.includes('data')) {
+        return '🗄️ Check the <strong>Database</strong> section to learn our schema!';
+    }
+    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+        return '👋 Hello! Great to meet you. Use the buttons above to explore the project!';
+    }
+    if (message.includes('help') || message.includes('how')) {
+        return '🤝 Click any info button above to learn about different aspects of this project!';
+    }
+    if (message.includes('thanks') || message.includes('thank')) {
+        return '😊 You\'re welcome! Feel free to ask any other questions!';
+    }
+    
+    return '💡 Try asking about: Tech Stack, Languages, Features, or Database!';
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
 }
