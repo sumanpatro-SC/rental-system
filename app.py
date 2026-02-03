@@ -97,7 +97,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'application/json; charset=utf-8')
         self.end_headers()
-        self.wfile.write(json.dumps(data).encode('utf-8'))
+        self.wfile.write(json.dumps(data, indent=4).encode('utf-8'))
 
     def do_GET(self):
         # 1. Handle favicon (Prevents 502/Crash)
@@ -124,6 +124,21 @@ class RequestHandler(BaseHTTPRequestHandler):
         if self.path in routes:
             path, ctype = routes[self.path]
             self.serve_file(path, ctype)
+        
+        elif self.path == '/api/':
+            api_info = {
+                "message": "Rental System API",
+                "endpoints": {
+                    "/api/properties": "GET - Get all properties",
+                    "/api/properties/{id}": "DELETE - Delete property by ID",
+                    "/api/add-property": "POST - Add new property",
+                    "/api/billing-data": "GET - Get all billing data (customers & properties)",
+                    "/api/billing/{id}": "DELETE - Delete customer by ID",
+                    "/api/add-customer": "POST - Add new customer",
+                    "/api/search-pdf?q=<query>": "GET - Search documentation"
+                }
+            }
+            self.send_json(api_info)
             
         elif self.path == '/api/properties':
             conn = sqlite3.connect(DB_NAME)

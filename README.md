@@ -1,85 +1,4 @@
-# rental-system
-
-A lightweight property rental management system (no framework). This repository contains a simple HTTP server, a client-side SPA, and a SQLite database for properties and customers.
-
-**DFD Diagrams**
-
-**Level 0 (Context Diagram)**
-
-This context diagram shows the `Rental System` as a single central process interacting with external actors.
-
-```mermaid
-graph LR
-  Owner[Property Owner]
-  Tenant[Customer / Tenant]
-  Admin[Administrator]
-  PaymentGateway[Payment Gateway]
-  System((Rental System))
-
-  Owner -->|Manage properties| System
-  Tenant -->|Search / Book / View Billing| System
-  Admin -->|Configure / Reports| System
-  System -->|Process payments| PaymentGateway
-```
-
-**Level 1 DFD**
-
-Breaks the central process into major sub-processes, data flows, and data stores.
-
-```mermaid
-graph LR
-  subgraph Rental_System[Rental System]
-    PM[Property Management]
-    CM[Customer Management]
-    BP[Billing & Payments]
-    RP[Reporting]
-  end
-
-  Owner[Property Owner] -->|create/update| PM
-  Tenant[Customer] -->|register/book| CM
-  CM -->|customer data| DB_Customers[(Customers DB)]
-  PM -->|property data| DB_Properties[(Properties DB)]
-  BP -->|billing records| DB_Billing[(Billing DB)]
-  CM -->|trigger billing| BP
-  PM -->|availability| BP
-  RP -->|reads| DB_Properties
-  RP -->|reads| DB_Customers
-  RP -->|reads| DB_Billing
-```
-
-**Level 2 DFD (Billing & Payments decomposition)**
-
-Detailed view of the `Billing & Payments` subprocess showing invoice generation, payment processing, and updates to data stores.
-
-```mermaid
-graph LR
-  CustomerData[Customer Data]
-  PropertyData[Property Data]
-  GenerateInvoice[1. Generate Invoice]
-  SendInvoice[2. Send Invoice / Notify Customer]
-  ReceivePayment[3. Receive Payment]
-  VerifyPayment[4. Verify Payment]
-  UpdateRecords[5. Update Billing & Property Status]
-  Receipt[Receipt / Confirmation]
-
-  CustomerData --> GenerateInvoice
-  PropertyData --> GenerateInvoice
-  GenerateInvoice --> SendInvoice
-  SendInvoice --> CustomerData
-  CustomerData --> ReceivePayment
-  ReceivePayment --> VerifyPayment
-  VerifyPayment --> UpdateRecords
-  UpdateRecords --> DB_Billing[(Billing DB)]
-  UpdateRecords --> DB_Properties[(Properties DB)]
-  VerifyPayment --> Receipt
-```
-
-Notes:
-- GitHub renders Mermaid diagrams in Markdown; view these diagrams on GitHub or a compatible Markdown renderer.
-- The diagrams show conceptual data flows; adapt them as needed to match implementation details.
-# rental-system
-
-# Rental System - Complete Documentation
+# Rental System - Property Management Platform
 
 A lightweight **property rental management system** built with **Python HTTP server** (no framework), **vanilla JavaScript frontend**, and **SQLite database**. This project demonstrates core web development concepts: REST APIs, client-side routing, database operations, and DOM manipulation.
 
@@ -118,55 +37,180 @@ This project uses a custom Python HTTP server instead of Django/Flask to:
 - ✅ Work with SQLite database directly
 - ✅ Keep the codebase lightweight and educational
 
-### Tech Stack
+### Tech Stack Diagram
 
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Python 3 + HTTPServer (no framework) |
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
-| **Database** | SQLite3 |
-| **Reports** | jsPDF, QRCode.js |
+```mermaid
+graph LR
+    subgraph Frontend["🎨 Frontend Layer"]
+        HTML["HTML5<br/>Templates"]
+        CSS["CSS3<br/>Responsive"]
+        JS["JavaScript ES6+<br/>Vanilla - No Framework"]
+        Widget["Chat Widget<br/>with AI Search"]
+    end
+    
+    subgraph Backend["🖥️ Backend Layer"]
+        Python["Python 3<br/>http.server"]
+        Handler["Request Handler<br/>GET/POST/DELETE"]
+        API["REST API<br/>Endpoints"]
+        Search["PDF Search<br/>Engine"]
+    end
+    
+    subgraph Database["💾 Data Layer"]
+        SQLite["SQLite3<br/>Database"]
+        Props["Properties<br/>Table"]
+        Custs["Customers<br/>Table"]
+        Docs["Documentation<br/>Files"]
+    end
+    
+    subgraph Tools["🛠️ Libraries & Tools"]
+        jsPDF["jsPDF<br/>PDF Generation"]
+        QR["QRCode.js<br/>QR Codes"]
+        Fetch["Fetch API<br/>HTTP Requests"]
+    end
+    
+    HTML --> JS
+    CSS --> JS
+    JS --> Fetch
+    Widget --> Fetch
+    
+    Fetch --> API
+    API --> Handler
+    Handler --> Python
+    Handler --> Search
+    
+    Handler --> SQLite
+    Search --> Docs
+    
+    SQLite --> Props
+    SQLite --> Custs
+    
+    jsPDF --> Frontend
+    QR --> Frontend
+    
+    style Frontend fill:#e3f2fd
+    style Backend fill:#f5f5f5
+    style Database fill:#fff9c4
+    style Tools fill:#f3e5f5
+```
+
+### Tech Stack Details
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Backend** | Python 3 + HTTPServer | Lightweight server, no framework needed |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript | Pure web standards, no frameworks |
+| **Database** | SQLite3 | Lightweight file-based database |
+| **Reports** | jsPDF | Client-side PDF generation |
+| **QR Codes** | QRCode.js | Generate QR codes for billing |
+| **Documentation** | Plain text files | 160+ Q&A searchable via API |
 
 ---
 
 ## Architecture
 
-### Three-Layer Model
+### Three-Layer Architecture
 
-```
-┌─────────────────────────────────────────┐
-│         Frontend (Browser)              │
-│  - HTML Templates                       │
-│  - JavaScript (Routing & API Calls)     │
-│  - CSS Styling                          │
-└──────────────┬──────────────────────────┘
-               │ (HTTP Requests/Responses)
-┌──────────────▼──────────────────────────┐
-│      Backend (HTTP Server)              │
-│  - RequestHandler (GET/POST/DELETE)     │
-│  - REST API Endpoints                   │
-│  - Database Operations                  │
-└──────────────┬──────────────────────────┘
-               │ (SQL Queries)
-┌──────────────▼──────────────────────────┐
-│      Data (SQLite Database)             │
-│  - Properties Table                     │
-│  - Customers Table                      │
-└─────────────────────────────────────────┘
+```mermaid
+graph LR
+    User["👤 User<br/>(Browser)"]
+    HTML["📄 HTML Templates<br/>(index.html, add_property.html, etc.)"]
+    JS["⚙️ JavaScript<br/>(script.js)"]
+    CSS["🎨 CSS Styling<br/>(style.css)"]
+    Widget["💬 Chat Widget<br/>(AI Documentation)"]
+    
+    Server["🖥️ HTTP Server<br/>(Python app.py)"]
+    RequestHandler["📨 Request Handler<br/>(GET/POST/DELETE)"]
+    API["🔌 REST API<br/>(/api/properties, /api/billing, etc.)"]
+    Search["🔍 PDF Search<br/>(/api/search-pdf)"]
+    
+    Database["💾 SQLite Database<br/>(database.db)"]
+    Properties["📋 Properties Table<br/>(title, price, status)"]
+    Customers["👥 Customers Table<br/>(name, contact, billing_date)"]
+    Documentation["📚 Documentation<br/>(project-documentation.txt)"]
+    
+    User -->|Opens| HTML
+    HTML -->|Loads| JS
+    HTML -->|Loads| CSS
+    JS -->|Initializes| Widget
+    
+    User -->|Interacts| JS
+    JS -->|API Calls| Server
+    
+    Server -->|Handles| RequestHandler
+    RequestHandler -->|Routes| API
+    RequestHandler -->|Searches| Search
+    
+    API -->|Queries| Database
+    Search -->|Reads| Documentation
+    
+    Database -->|Contains| Properties
+    Database -->|Contains| Customers
+    
+    style User fill:#e1f5ff
+    style HTML fill:#fff3e0
+    style JS fill:#f3e5f5
+    style CSS fill:#e8f5e9
+    style Widget fill:#fce4ec
+    style Server fill:#ede7f6
+    style RequestHandler fill:#ede7f6
+    style API fill:#e0f2f1
+    style Search fill:#e0f2f1
+    style Database fill:#fff8e1
+    style Properties fill:#fff8e1
+    style Customers fill:#fff8e1
+    style Documentation fill:#fff8e1
 ```
 
-### How It Works (Request Flow)
+### Complete Request Flow
 
-```
-1. User opens browser → http://localhost:8000
-2. Browser makes GET request to /
-3. Server responds with index.html
-4. Browser loads script.js and style.css
-5. script.js detects route using window.location.pathname
-6. Calls appropriate handler (loadDashboard, loadPropertyList, etc.)
-7. Handler makes API call (e.g., fetch('/api/properties'))
-8. Server queries SQLite and returns JSON
-9. JavaScript renders data in HTML tables
+```mermaid
+graph LR
+    Start["1️⃣ User opens<br/>http://localhost:8000"]
+    Browser["2️⃣ Browser requests<br/>GET /"]
+    Server["3️⃣ Server responds<br/>with index.html"]
+    Load["4️⃣ Browser loads<br/>script.js + style.css"]
+    Route["5️⃣ JavaScript detects<br/>route from URL"]
+    
+    Dashboard["📊 Dashboard Route?<br/>loadDashboard()"]
+    PropertyList["🏠 Property List?<br/>loadPropertyList()"]
+    Billing["💳 Billing Route?<br/>loadBillingList()"]
+    Customer["👤 Customer Route?<br/>loadCustomerPage()"]
+    
+    APICall["6️⃣ Make API call<br/>fetch('/api/...')"]
+    Backend["7️⃣ Backend processes<br/>SQL Query"]
+    DBQuery["8️⃣ SQLite returns<br/>JSON Data"]
+    Render["9️⃣ Render HTML<br/>in tables"]
+    Display["🎉 Display to user"]
+    
+    Start --> Browser
+    Browser --> Server
+    Server --> Load
+    Load --> Route
+    Route -->|check path| Dashboard
+    Route -->|check path| PropertyList
+    Route -->|check path| Billing
+    Route -->|check path| Customer
+    
+    Dashboard --> APICall
+    PropertyList --> APICall
+    Billing --> APICall
+    Customer --> APICall
+    
+    APICall --> Backend
+    Backend --> DBQuery
+    DBQuery --> Render
+    Render --> Display
+    
+    style Start fill:#c8e6c9
+    style Browser fill:#bbdefb
+    style Server fill:#ffccbc
+    style Load fill:#f8bbd0
+    style Route fill:#ffe0b2
+    style APICall fill:#e1bee7
+    style Backend fill:#b2dfdb
+    style DBQuery fill:#fff9c4
+    style Render fill:#ffccbc
+    style Display fill:#c8e6c9
 ```
 
 ---
@@ -258,6 +302,52 @@ Now access at: `http://localhost:5000`
 ---
 
 ## Project Features
+
+### Core Features Overview
+
+```mermaid
+graph LR
+    App["🏢 Rental System"]
+    
+    Dashboard["📊 Dashboard<br/>• Property stats<br/>• Quick overview<br/>• Available vs Rented"]
+    
+    PropMgmt["🏠 Property Management<br/>• Add properties<br/>• View all properties<br/>• Delete properties<br/>• Track status"]
+    
+    CustMgmt["👥 Customer Management<br/>• Add tenants<br/>• Link to property<br/>• Track billing date<br/>• Contact info"]
+    
+    Billing["💳 Billing & Reports<br/>• View all records<br/>• Customer details<br/>• Generate reports<br/>• Export PDF/CSV<br/>• QR codes"]
+    
+    Widget["💬 Chat Widget<br/>• Quick info buttons<br/>• AI documentation<br/>• Search answers<br/>• Smart positioning"]
+    
+    App --> Dashboard
+    App --> PropMgmt
+    App --> CustMgmt
+    App --> Billing
+    App --> Widget
+    
+    style App fill:#e3f2fd
+    style Dashboard fill:#c8e6c9
+    style PropMgmt fill:#fff3e0
+    style CustMgmt fill:#f3e5f5
+    style Billing fill:#ffccbc
+    style Widget fill:#e0f2f1
+```
+
+### Feature Details
+
+| Feature | Details | Benefit |
+|---------|---------|---------|
+| **Dashboard Stats** | Count available, rented, total properties | Quick overview of inventory |
+| **Property CRUD** | Create, read, update, delete properties | Full property management |
+| **Customer Management** | Assign customers to properties | Track occupancy |
+| **Automatic Status** | Property status changes with customer add/delete | Prevents double-booking |
+| **Billing Records** | JOIN query shows customer + property info | Comprehensive billing data |
+| **PDF Reports** | Generate and download billing reports | Professional documentation |
+| **CSV Export** | Export all data as CSV | Integration with Excel |
+| **QR Codes** | Generate QR codes for billing | Digital verification |
+| **Chat Widget** | Draggable widget with documentation search | User support & guidance |
+| **Smart Positioning** | Widget positions opposite to icon | Better UX |
+| **Documentation** | 160+ Q&A on HTML, CSS, SQL, databases | Learning resource |
 
 ### 1. Dashboard (Home Page)
 **URL:** `/` or `/index.html`
@@ -498,6 +588,61 @@ Function: sortTable(tableId, columnIndex)
 
 All endpoints return JSON format. Base URL: `http://localhost:8000`
 
+### API Architecture
+
+```mermaid
+graph LR
+    Client["🌐 Client<br/>(Browser)"]
+    
+    API["🔌 REST API Server"]
+    
+    GET_Props["GET /api/properties<br/>All properties"]
+    POST_Prop["POST /api/add-property<br/>Create property"]
+    DEL_Prop["DELETE /api/properties/:id<br/>Delete property"]
+    
+    GET_Billing["GET /api/billing-data<br/>All billing records"]
+    POST_Cust["POST /api/add-customer<br/>Create customer"]
+    DEL_Cust["DELETE /api/billing/:id<br/>Delete customer"]
+    
+    SEARCH["GET /api/search-pdf<br/>Search docs"]
+    INFO["GET /api/<br/>API info"]
+    
+    DB["💾 SQLite Database"]
+    Docs["📚 Documentation"]
+    
+    Client -->|fetch| API
+    
+    API --> GET_Props
+    API --> POST_Prop
+    API --> DEL_Prop
+    API --> GET_Billing
+    API --> POST_Cust
+    API --> DEL_Cust
+    API --> SEARCH
+    API --> INFO
+    
+    GET_Props --> DB
+    POST_Prop --> DB
+    DEL_Prop --> DB
+    GET_Billing --> DB
+    POST_Cust --> DB
+    DEL_Cust --> DB
+    SEARCH --> Docs
+    
+    style Client fill:#e3f2fd
+    style API fill:#e8f5e9
+    style GET_Props fill:#fff3e0
+    style POST_Prop fill:#f3e5f5
+    style DEL_Prop fill:#fce4ec
+    style GET_Billing fill:#fff3e0
+    style POST_Cust fill:#f3e5f5
+    style DEL_Cust fill:#fce4ec
+    style SEARCH fill:#e0f2f1
+    style INFO fill:#e0f2f1
+    style DB fill:#fff9c4
+    style Docs fill:#fff9c4
+```
+
 ### Properties Endpoints
 
 | Method | Endpoint | Purpose | Request Body | Response |
@@ -519,6 +664,13 @@ All endpoints return JSON format. Base URL: `http://localhost:8000`
 |--------|----------|---------|----------|
 | GET | `/api/billing-data` | Get all billing records (with JOIN) | `[{id, p_name, c_name, price, contact, date, p_id}, ...]` |
 
+### Search & Info Endpoints
+
+| Method | Endpoint | Purpose | Response |
+|--------|----------|---------|----------|
+| GET | `/api/search-pdf?q=query` | Search documentation | `{status: "found", results: [...]}` |
+| GET | `/api/` | API information | `{message: "...", endpoints: {...}}` |
+
 ### Static File Endpoints
 
 | Endpoint | Purpose |
@@ -532,6 +684,7 @@ All endpoints return JSON format. Base URL: `http://localhost:8000`
 | `/static/script.js` | JavaScript |
 | `/templates/header.html` | Header fragment |
 | `/templates/footer.html` | Footer fragment |
+| `/templates/widget.html` | Chat widget |
 
 ---
 
@@ -539,15 +692,53 @@ All endpoints return JSON format. Base URL: `http://localhost:8000`
 
 ### Architecture: Client-Side Routing
 
-**Traditional Server-Side Routing:**
-```
-Browser → /property-list → Server routes to property_list.html → Send HTML
-```
-
-**This Project (Client-Side Routing):**
-```
-Browser → /property-list → Server sends property_list.html
-JavaScript detects URL path → Calls loadPropertyList() → Fetches API data → Renders table
+```mermaid
+graph LR
+    UserURL["🌐 User visits URL<br/>http://localhost:8000/property-list"]
+    Server["🖥️ Server responds<br/>with HTML file"]
+    Browser["📱 Browser loads<br/>HTML + JS + CSS"]
+    PathDetect["🔍 JavaScript detects<br/>window.location.pathname"]
+    
+    Dashboard["🏠 Path = '/'<br/>loadDashboard()"]
+    AddProp["➕ Path = '/add-property'<br/>setupAddProperty()"]
+    PropList["📋 Path = '/property-list'<br/>loadPropertyList()"]
+    Customer["👤 Path = '/customer-details'<br/>loadCustomerPage()"]
+    Billing["💳 Path = '/billing'<br/>loadBillingList()"]
+    
+    API["🔌 Fetch from API"]
+    Render["🎨 Render HTML<br/>in DOM"]
+    Display["✅ Show to user"]
+    
+    UserURL --> Server
+    Server --> Browser
+    Browser --> PathDetect
+    PathDetect --> Dashboard
+    PathDetect --> AddProp
+    PathDetect --> PropList
+    PathDetect --> Customer
+    PathDetect --> Billing
+    
+    Dashboard --> API
+    AddProp --> API
+    PropList --> API
+    Customer --> API
+    Billing --> API
+    
+    API --> Render
+    Render --> Display
+    
+    style UserURL fill:#bbdefb
+    style Server fill:#ffccbc
+    style Browser fill:#f8bbd0
+    style PathDetect fill:#ffe0b2
+    style Dashboard fill:#c8e6c9
+    style AddProp fill:#c8e6c9
+    style PropList fill:#c8e6c9
+    style Customer fill:#c8e6c9
+    style Billing fill:#c8e6c9
+    style API fill:#e1bee7
+    style Render fill:#ffccbc
+    style Display fill:#c8e6c9
 ```
 
 ### Route Detection in JavaScript
@@ -555,11 +746,162 @@ JavaScript detects URL path → Calls loadPropertyList() → Fetches API data �
 ```javascript
 // In script.js - DOMContentLoaded event
 const path = window.location.pathname;
+
 if (path === "/") loadDashboard();
-if (path === "/add-property") setupAddProperty();
-if (path === "/property-list") loadPropertyList();
-if (path === "/customer-details") loadCustomerPage();
-if (path === "/billing") loadBillingList();
+else if (path === "/add-property") setupAddProperty();
+else if (path === "/property-list") loadPropertyList();
+else if (path === "/customer-details") loadCustomerPage();
+else if (path === "/billing") loadBillingList();
+
+// Load widget on all pages
+loadWidget();
+```
+
+### Page Flow Diagrams
+
+#### 1. Dashboard Page (/)
+
+```mermaid
+graph LR
+    Load["Page Loads<br/>loadDashboard()"]
+    API["Fetch<br/>/api/properties"]
+    Filter["Filter by Status"]
+    Count["Count: Available<br/>Rented<br/>Total"]
+    Stats["Update Stat Cards<br/>with numbers"]
+    Display["Display to User"]
+    
+    Load --> API
+    API --> Filter
+    Filter --> Count
+    Count --> Stats
+    Stats --> Display
+    
+    style Load fill:#e3f2fd
+    style API fill:#fff3e0
+    style Filter fill:#f3e5f5
+    style Count fill:#c8e6c9
+    style Stats fill:#ffccbc
+    style Display fill:#c8e6c9
+```
+
+#### 2. Property Management Flow
+
+```mermaid
+graph LR
+    AddPage["Add Property Page<br/>Form"]
+    Submit["User submits<br/>Form Data"]
+    POST["POST /api/add-property<br/>JSON payload"]
+    DBInsert["Database<br/>INSERT new property<br/>status='available'"]
+    Redirect["Redirect to<br/>/property-list"]
+    Display["Show all<br/>properties"]
+    
+    AddPage --> Submit
+    Submit --> POST
+    POST --> DBInsert
+    DBInsert --> Redirect
+    Redirect --> Display
+    
+    style AddPage fill:#c8e6c9
+    style Submit fill:#fff3e0
+    style POST fill:#f3e5f5
+    style DBInsert fill:#fff9c4
+    style Redirect fill:#ffccbc
+    style Display fill:#c8e6c9
+```
+
+#### 3. Customer & Billing Flow
+
+```mermaid
+graph LR
+    CustPage["Customer Page<br/>Add Customer Form"]
+    Select["Select Property<br/>from dropdown<br/>(only available)"]
+    Submit["Submit form<br/>with customer data"]
+    
+    API1["POST /api/add-customer<br/>INSERT customer"]
+    API2["UPDATE property<br/>SET status='rented'"]
+    
+    Success["✅ Success<br/>Property now rented"]
+    Reload["Page reloads<br/>Show customers table"]
+    
+    CustPage --> Select
+    Select --> Submit
+    Submit --> API1
+    API1 --> API2
+    API2 --> Success
+    Success --> Reload
+    
+    style CustPage fill:#c8e6c9
+    style Select fill:#fff3e0
+    style Submit fill:#f3e5f5
+    style API1 fill:#fff9c4
+    style API2 fill:#fff9c4
+    style Success fill:#c8e6c9
+    style Reload fill:#ffccbc
+```
+
+#### 4. Billing & Reports Flow
+
+```mermaid
+graph LR
+    BillPage["Billing Page<br/>View Reports"]
+    API["Fetch<br/>/api/billing-data<br/>(JOIN query)"]
+    ParseData["Parse JSON<br/>customer + property"]
+    Render["Render table<br/>with data"]
+    Actions["User Actions"]
+    
+    View["View Details<br/>(Modal)"]
+    Download["Download PDF<br/>or CSV"]
+    Delete["Delete Customer"]
+    
+    API --> ParseData
+    ParseData --> Render
+    Render --> Actions
+    Actions --> View
+    Actions --> Download
+    Actions --> Delete
+    
+    Delete --> Cleanup["Update property<br/>status='available'"]
+    
+    style BillPage fill:#c8e6c9
+    style API fill:#fff3e0
+    style ParseData fill:#f3e5f5
+    style Render fill:#ffccbc
+    style Actions fill:#e0f2f1
+    style View fill:#fff3e0
+    style Download fill:#fff3e0
+    style Delete fill:#ffccbc
+    style Cleanup fill:#fff9c4
+```
+
+#### 5. Chat Widget & Documentation Flow
+
+```mermaid
+graph LR
+    User["User clicks<br/>Chat Icon"]
+    Widget["Widget opens<br/>Chat window"]
+    Options["5 Info Buttons:<br/>Backend, Data,<br/>Frontend, CSS,<br/>Scaling"]
+    
+    Button["User clicks<br/>Button OR<br/>Types question"]
+    
+    Search["Search<br/>/api/search-pdf"]
+    Results["Get top 3<br/>documentation<br/>results"]
+    Response["Show response<br/>in chat"]
+    
+    User --> Widget
+    Widget --> Options
+    Widget --> Button
+    Options --> Response
+    Button --> Search
+    Search --> Results
+    Results --> Response
+    
+    style User fill:#e3f2fd
+    style Widget fill:#c8e6c9
+    style Options fill:#fff3e0
+    style Button fill:#f3e5f5
+    style Search fill:#e0f2f1
+    style Results fill:#fff9c4
+    style Response fill:#ffccbc
 ```
 
 **Why This Approach?**
