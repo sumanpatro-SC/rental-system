@@ -182,8 +182,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                                (post_data.get('title'), post_data.get('description'), post_data.get('price')))
             elif self.path == '/api/update-property':
                 # Expecting: id, title, description, price, status
+                prop_id = post_data.get('id')
+                new_status = post_data.get('status', 'available')
+                # Get current status to check if changing from rented to available
+                cursor.execute("SELECT status FROM properties WHERE id = ?", (prop_id,))
+                current = cursor.fetchone()
+                old_status = current[0] if current else None
+                # Update property
                 cursor.execute("UPDATE properties SET title = ?, description = ?, price = ?, status = ? WHERE id = ?",
-                               (post_data.get('title'), post_data.get('description'), post_data.get('price'), post_data.get('status', 'available'), post_data.get('id')))
+                               (post_data.get('title'), post_data.get('description'), post_data.get('price'), new_status, prop_id))
+                # If status changed from rented to available, delete all customers for this property
+                if old_status == 'rented' and new_status == 'available':
+                    cursor.execute("DELETE FROM customers WHERE property_id = ?", (prop_id,))
             elif self.path == '/api/add-customer':
                 cursor.execute("INSERT INTO customers (name, contact, property_id, billing_date) VALUES (?, ?, ?, ?)",
                                (post_data.get('name'), post_data.get('contact'), post_data.get('property_id'), post_data.get('date')))
