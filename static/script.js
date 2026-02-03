@@ -71,6 +71,7 @@ async function loadPropertyList() {
                 <td>₹${p.price}</td>
                 <td><span class="status-${p.status}">${p.status}</span></td>
                 <td style="text-align:right;">
+                    <button class="btn-edit" onclick="openEditProperty(${p.id})">Edit</button>
                     <button class="btn-del" onclick="deleteItem('properties', ${p.id})">Delete</button>
                 </td>
             </tr>`).join('');
@@ -98,18 +99,29 @@ async function loadCustomerPage() {
     if (custForm) {
         custForm.onsubmit = async (e) => {
             e.preventDefault();
+            const custId = document.getElementById('custId').value;
             const data = {
                 name: document.getElementById('cname').value,
                 contact: document.getElementById('cphone').value,
                 property_id: document.getElementById('propSelect').value,
                 date: document.getElementById('bdate').value
             };
-            const res = await fetch('/api/add-customer', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            if (res.ok) window.location.reload();
+            if (custId) {
+                data.id = custId;
+                const res = await fetch('/api/update-customer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) window.location.reload();
+            } else {
+                const res = await fetch('/api/add-customer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) window.location.reload();
+            }
         };
     }
 
@@ -124,6 +136,7 @@ async function loadCustomerPage() {
                 <td>${c.p_name}</td>
                 <td>${c.date}</td>
                 <td style="text-align:right;">
+                    <button class="btn-edit" onclick="openEditCustomer(${c.id})">Edit</button>
                     <button class="btn-del" onclick="deleteItem('billing', ${c.id})">Delete</button>
                 </td>
             </tr>`).join('');
@@ -265,6 +278,83 @@ function generateQRCode() {
 function closeView() {
     document.getElementById('viewModal').style.display = 'none';
     currentBillingData = null;
+}
+
+// --- PROPERTY EDIT HANDLERS ---
+function openEditProperty(id) {
+    fetch('/api/properties').then(r => r.json()).then(data => {
+        const p = data.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('editPropId').value = p.id;
+        document.getElementById('editTitle').value = p.title || '';
+        document.getElementById('editDesc').value = p.description || '';
+        document.getElementById('editPrice').value = p.price || '';
+        document.getElementById('editStatus').value = p.status || 'available';
+        document.getElementById('editPropModal').style.display = 'block';
+    }).catch(err => console.error('Failed to load property for edit', err));
+}
+
+function closeEditPropModal() {
+    const m = document.getElementById('editPropModal');
+    if (m) m.style.display = 'none';
+}
+
+async function submitEditProperty() {
+    const id = document.getElementById('editPropId').value;
+    const payload = {
+        id: id,
+        title: document.getElementById('editTitle').value,
+        description: document.getElementById('editDesc').value,
+        price: document.getElementById('editPrice').value,
+        status: document.getElementById('editStatus').value
+    };
+    const res = await fetch('/api/update-property', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+        closeEditPropModal();
+        location.reload();
+    } else {
+        alert('Failed to update property');
+    }
+}
+
+// --- CUSTOMER EDIT HANDLERS ---
+function openEditCustomer(id) {
+    fetch('/api/billing-data').then(r => r.json()).then(data => {
+        const c = data.find(x => x.id === id);
+        if (!c) return;
+        document.getElementById('custId').value = c.id;
+        document.getElementById('cname').value = c.c_name || '';
+        document.getElementById('cphone').value = c.contact || '';
+        document.getElementById('bdate').value = c.date || '';
+        // Ensure the property select contains the current property (even if rented)
+        const sel = document.getElementById('propSelect');
+        if (sel) {
+            const exists = Array.from(sel.options).some(o => o.value == c.p_id);
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = c.p_id;
+                opt.text = `${c.p_name} (₹${c.price})`;
+                sel.appendChild(opt);
+            }
+            sel.value = c.p_id;
+        }
+        // update form UI
+        const saveBtn = document.getElementById('saveBtn');
+        if (saveBtn) saveBtn.innerText = 'Update Customer';
+        const cancel = document.getElementById('cancelEdit');
+        if (cancel) cancel.style.display = 'inline-block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(err => console.error('Failed to load customer for edit', err));
+}
+
+// Close QR (used by templates)
+function closeQR() {
+    const m = document.getElementById('qrModal');
+    if (m) m.style.display = 'none';
 }
 
 // --- UTILITIES ---

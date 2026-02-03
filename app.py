@@ -180,10 +180,28 @@ class RequestHandler(BaseHTTPRequestHandler):
             if self.path == '/api/add-property':
                 cursor.execute("INSERT INTO properties (title, description, price) VALUES (?, ?, ?)", 
                                (post_data.get('title'), post_data.get('description'), post_data.get('price')))
+            elif self.path == '/api/update-property':
+                # Expecting: id, title, description, price, status
+                cursor.execute("UPDATE properties SET title = ?, description = ?, price = ?, status = ? WHERE id = ?",
+                               (post_data.get('title'), post_data.get('description'), post_data.get('price'), post_data.get('status', 'available'), post_data.get('id')))
             elif self.path == '/api/add-customer':
                 cursor.execute("INSERT INTO customers (name, contact, property_id, billing_date) VALUES (?, ?, ?, ?)",
                                (post_data.get('name'), post_data.get('contact'), post_data.get('property_id'), post_data.get('date')))
                 cursor.execute("UPDATE properties SET status = 'rented' WHERE id = ?", (post_data.get('property_id'),))
+            elif self.path == '/api/update-customer':
+                # Expecting: id, name, contact, property_id, date
+                cust_id = post_data.get('id')
+                new_pid = post_data.get('property_id')
+                # Find current property for this customer
+                cursor.execute("SELECT property_id FROM customers WHERE id = ?", (cust_id,))
+                row = cursor.fetchone()
+                old_pid = row[0] if row else None
+                cursor.execute("UPDATE customers SET name = ?, contact = ?, property_id = ?, billing_date = ? WHERE id = ?",
+                               (post_data.get('name'), post_data.get('contact'), new_pid, post_data.get('date'), cust_id))
+                # Update property statuses if property changed
+                if old_pid and str(old_pid) != str(new_pid):
+                    cursor.execute("UPDATE properties SET status = 'available' WHERE id = ?", (old_pid,))
+                    cursor.execute("UPDATE properties SET status = 'rented' WHERE id = ?", (new_pid,))
 
             conn.commit()
             conn.close()

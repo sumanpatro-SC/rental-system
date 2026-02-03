@@ -38,6 +38,31 @@
             <div id="qrcode" style="display: flex; justify-content: center; padding: 20px;"></div>
         </div>
     </div>
+        <!-- Edit Property Modal -->
+        <div id="editPropModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditPropModal()">&times;</span>
+                <h3>Edit Property</h3>
+                <input type="hidden" id="editPropId" value="">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="editTitle">
+                    <label>Description</label>
+                    <textarea id="editDesc"></textarea>
+                    <label>Price</label>
+                    <input type="number" id="editPrice" step="0.01">
+                    <label>Status</label>
+                    <select id="editStatus">
+                        <option value="available">available</option>
+                        <option value="rented">rented</option>
+                    </select>
+                </div>
+                <div class="btn-group" style="margin-top:12px; text-align:right;">
+                    <button class="btn-save" onclick="submitEditProperty()">Save</button>
+                    <button class="btn-del" onclick="closeEditPropModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
     <div id="footer-placeholder"></div>
     <script src="/static/script.js"></script>
 </body>
