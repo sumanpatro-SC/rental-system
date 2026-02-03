@@ -213,6 +213,8 @@ async function viewDetails(billingId) {
         document.getElementById('qrcodeContainer').style.display = 'none';
         document.getElementById('qrcode').innerHTML = '';
         document.getElementById('viewModal').style.display = 'block';
+        // Initialize draggable modal
+        setTimeout(() => makeModalDraggable('viewModal'), 0);
     }
 }
 
@@ -278,6 +280,72 @@ function generateQRCode() {
 function closeView() {
     document.getElementById('viewModal').style.display = 'none';
     currentBillingData = null;
+}
+
+// --- DRAGGABLE MODAL SETUP ---
+function makeModalDraggable(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalContent = modal.querySelector('.modal-content');
+    const dragHandle = modal.querySelector('#dragHandle');
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let isInitialized = false;
+
+    // Only attach drag listener to the handle
+    if (dragHandle) {
+        dragHandle.style.cursor = 'grab';
+        dragHandle.addEventListener('mousedown', onDragStart);
+        dragHandle.addEventListener('touchstart', onDragStart, { passive: false });
+    }
+
+    function onDragStart(e) {
+        e.preventDefault();
+        
+        // Initialize position on first drag if not already done
+        if (!isInitialized && modalContent.style.position !== 'fixed') {
+            const rect = modalContent.getBoundingClientRect();
+            modalContent.style.position = 'fixed';
+            modalContent.style.left = rect.left + 'px';
+            modalContent.style.top = rect.top + 'px';
+            modalContent.style.margin = '0';
+            isInitialized = true;
+        }
+        
+        isDragging = true;
+        const rect = modalContent.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        dragOffsetX = clientX - rect.left;
+        dragOffsetY = clientY - rect.top;
+        if (dragHandle) dragHandle.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+    }
+
+    function onDragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const left = clientX - dragOffsetX;
+        const top = clientY - dragOffsetY;
+        
+        // Allow dragging anywhere, but keep within reasonable bounds
+        modalContent.style.left = Math.max(-modalContent.offsetWidth + 50, Math.min(left, window.innerWidth - 50)) + 'px';
+        modalContent.style.top = Math.max(-modalContent.offsetHeight + 50, Math.min(top, window.innerHeight - 50)) + 'px';
+    }
+
+    function onDragEnd() {
+        isDragging = false;
+        if (dragHandle) dragHandle.style.cursor = 'grab';
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchend', onDragEnd);
+    }
 }
 
 // --- PROPERTY EDIT HANDLERS ---

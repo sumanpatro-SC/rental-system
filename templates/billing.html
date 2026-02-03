@@ -36,8 +36,11 @@
     </div>
     <div id="viewModal" class="modal">
     <div class="modal-content detail-card">
-        <span class="close" onclick="closeView()">&times;</span>
-        <h2 style="border-left: 5px solid var(--pastel-blue); padding-left: 10px;">Tenant & Property Details</h2>
+        <div class="modal-header" id="dragHandle">
+            <span class="drag-icon">☰</span>
+            <h2 style="border-left: 5px solid var(--pastel-blue); padding-left: 10px; margin: 0;">Tenant & Property Details</h2>
+            <span class="close" onclick="closeView()">&times;</span>
+        </div>
         <hr>
         <div id="detailBody" style="text-align: left; line-height: 1.8;">
             </div>
