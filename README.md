@@ -256,6 +256,22 @@ CREATE TABLE customers (
 - When a customer is added, their property status changes to **'rented'**
 - When a customer is deleted, the property status changes back to **'available'**
 
+### Entity Relationship Diagram
+
+```mermaid
+graph LR
+    Properties["🏠 Properties<br/>━━━━━━━━━━━<br/>id (PK)<br/>title<br/>description<br/>price<br/>status"]
+    
+    Customers["👥 Customers<br/>━━━━━━━━━━━<br/>id (PK)<br/>name<br/>contact<br/>property_id (FK)<br/>billing_date"]
+    
+    Properties -->|1| Relationship["1 to Many"]
+    Relationship -->|Many| Customers
+    
+    style Properties fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    style Customers fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    style Relationship fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+```
+
 ---
 
 ## How to Run

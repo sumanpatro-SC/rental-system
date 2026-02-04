@@ -492,3 +492,21 @@ A: ASC: NULL values appear first. DESC: NULL values appear last. NULLS FIRST/NUL
 
 Q: What is statement vs prepared statement performance?
 A: Statement: parse, compile, execute every time. Prepared: parse once, execute many times. Prepared faster for repeated queries. Network round-trips reduced with batch. SQL injection prevented with prepared. Prepared requires more setup. Single-use queries: negligible difference. Frequently executed: significant improvement. Always use prepared for security. Security more important than minor performance gain.
+
+
+Q: Front-End Technologies (HTML, CSS, Tailwind CSS, JavaScript)
+A: HTML (HyperText Markup Language) is used to structure the content of the Clinic Management System, including forms, tables, buttons, and navigation elements. It helps in organizing patient records, doctor details, and billing information in a clear and readable format.
+CSS is used to style the web pages and enhance their visual appearance. In this project, the Tailwind CSS library is used to simplify styling and ensure a consistent and responsive design across different pages. Tailwind CSS allows rapid UI development by using predefined utility classes for layout, spacing, colors, and typography.
+JavaScript is used to add interactivity to the frontend. It handles form validation, user interactions, and dynamic updates of data without reloading the page. A well-designed frontend improves user experience and allows clinic staff to interact with the system smoothly.
+Using HTML, CSS, Tailwind CSS, and JavaScript makes the application lightweight, responsive, and compatible with modern web browsers. These technologies are easy to learn and suitable for academic projects.
+
+
+Q: Back-End Technology (Python)
+A: The backend of the Clinic Management System is developed using Python without any framework. Python is a widely used programming language known for its simplicity, readability, and ease of implementation, making it suitable for both academic and real-world applications.
+In this project, Python handles application logic, processes user requests, and manages communication with the SQLite database using REST APIs. It performs operations such as adding, viewing, updating, and deleting patient records, doctor details, and billing information.
+The backend ensures smooth data flow between the frontend and database while maintaining data integrity and basic error handling. Using Python without a framework reduces complexity and provides better control over application logic, making the system easy to understand and maintain.
+
+Q: Database Technology (SQLite)
+A: SQLite is used as the database management system in the Clinic Management System. It is a lightweight, serverless database that stores data in a single file, making it easy to set up and manage.
+SQLite supports standard SQL commands and provides reliable data storage with minimal configuration. In this project, it stores patient information, doctor details, and billing records in an organized and structured manner.
+The database allows quick retrieval, updating, and deletion of records, ensuring data accuracy and consistency. SQLite integrates well with Python through the sqlite3 module, enabling efficient communication between the backend and the database.Due to its simplicity, portability, and reliability, SQLite is well suited for academic projects like the Clinic Management System.
