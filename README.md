@@ -1,5 +1,7 @@
 # Rental System - Property Management Platform
 
+https://docs.google.com/document/d/1twnGjeCWG-UjPK2LCdgv3e15UiIXdsSyrT_FlM3Ct9k/edit?usp=sharing
+
 A lightweight **property rental management system** built with **Python HTTP server** (no framework), **vanilla JavaScript frontend**, and **SQLite database**. This project demonstrates core web development concepts: REST APIs, client-side routing, database operations, and DOM manipulation.
 
 ---
