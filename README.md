@@ -106,6 +106,59 @@ graph LR
 
 ---
 
+## Use Case Diagram
+
+```mermaid
+graph LR
+    PropertyOwner["🏠 Property Owner"]
+    Administrator["👨‍💼 Administrator"]
+    Tenant["👤 Tenant/User"]
+    
+    Dashboard["📊 View Dashboard<br/>See statistics"]
+    AddProperty["➕ Add Property<br/>Add rentals"]
+    ViewProperties["📋 View Properties<br/>Browse listings"]
+    DeleteProperty["🗑️ Delete Property<br/>Remove listings"]
+    
+    AddCustomer["👥 Add Customer<br/>Register tenant"]
+    ViewCustomers["📊 View Customers<br/>Tenant records"]
+    DeleteCustomer["🗑️ Delete Customer<br/>Remove tenant"]
+    
+    ViewBilling["💳 View Billing<br/>Payment records"]
+    ExportBilling["📄 Export Billing<br/>PDF/CSV reports"]
+    SearchDocs["🔍 Search Docs<br/>Get answers"]
+    
+    PropertyOwner --> AddProperty
+    PropertyOwner --> ViewProperties
+    PropertyOwner --> DeleteProperty
+    PropertyOwner --> Dashboard
+    
+    Administrator --> AddCustomer
+    Administrator --> ViewCustomers
+    Administrator --> DeleteCustomer
+    Administrator --> ViewBilling
+    Administrator --> ExportBilling
+    
+    Tenant --> ViewProperties
+    Tenant --> ViewBilling
+    Tenant --> SearchDocs
+    
+    style PropertyOwner fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style Administrator fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style Tenant fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style Dashboard fill:#c8e6c9
+    style AddProperty fill:#fff9c4
+    style ViewProperties fill:#fff9c4
+    style DeleteProperty fill:#ffccbc
+    style AddCustomer fill:#f8bbd0
+    style ViewCustomers fill:#f8bbd0
+    style DeleteCustomer fill:#ffccbc
+    style ViewBilling fill:#b2dfdb
+    style ExportBilling fill:#b2dfdb
+    style SearchDocs fill:#ffe0b2
+```
+
+---
+
 ## Architecture
 
 ### Three-Layer Architecture
